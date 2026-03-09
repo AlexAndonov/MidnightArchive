@@ -12,7 +12,7 @@ namespace MidnightArchive
 
 			builder.Services.AddApplicationServices();
 			builder.Services.AddApplicationDbContext(builder.Configuration);
-			builder.Services.AddApplicationIdentity();
+			builder.Services.AddApplicationIdentity(builder.Configuration);
 
 
 			builder.Services.AddDatabaseDeveloperPageExceptionFilter();
