@@ -5,11 +5,11 @@ namespace MidnightArchive.Core.DTOs.CategoryDTOs
 {
 	public class CategoryCreateDto
 	{
-		[Required(ErrorMessage = RequiredErrorMessage)]
+		[Required(ErrorMessage = FieldRequiredErrorMessage)]
 		[StringLength(CategoryTitleMaxLength, MinimumLength = CategoryTitleMinLength, ErrorMessage = RequiredLengthMessage)]
 		public string Title { get; set; } = null!;
 
-		[Required(ErrorMessage = RequiredErrorMessage)]
+		[Required(ErrorMessage = FieldRequiredErrorMessage)]
 		[StringLength(CategoryDescriptionMaxLength, MinimumLength = CategoryDescriptionMinLength, ErrorMessage = RequiredLengthMessage)]
 		public string Description { get; set; } = null!;
 	}

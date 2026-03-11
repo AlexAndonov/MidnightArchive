@@ -26,7 +26,7 @@ namespace MidnightArchive.Infra.Data.Constants
 		public const int CommentContentMinLength = 3;
 
 		// Required Message 
-		public const string RequiredErrorMessage = "{0} is required!";
+		public const string FieldRequiredErrorMessage = "{0} is required!";
 		public const string RequiredLengthMessage = "{0} must be between {2} and {1} symbols!";
 	}
 }
