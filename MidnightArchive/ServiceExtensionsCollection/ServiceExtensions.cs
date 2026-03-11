@@ -15,8 +15,11 @@ namespace Microsoft.Extensions.DependencyInjection
 		public static IServiceCollection AddApplicationServices(this IServiceCollection services)
 		{
 			services.AddScoped<ICategoryService, CategoryService>();
+			services.AddScoped<IStoryService, StoryService>();
+
 
 			services.AddAutoMapper(cfg => cfg.AddProfile<CategoryProfile>());
+			services.AddAutoMapper(cfg => cfg.AddProfile<StoryProfile>());
 
 			return services;
 		}

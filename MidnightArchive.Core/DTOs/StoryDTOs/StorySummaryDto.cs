@@ -9,17 +9,11 @@ namespace MidnightArchive.Core.DTOs.StoryDTOs
 
 		public string Title { get; set; } = null!;
 
-		public string Content { get; set; } = null!;
-
+		public string Preview { get; set; } = null!;
 
 		public DateTime CreatedOn { get; set; }
 
-		public DateTime? ModifiedOn { get; set; }
-
-		[Required]
-		public string AuthorId { get; set; } = null!;
-
-		public int CategoryId { get; set; }
+		public string AuthorName { get; set; } = null!;
 
 		public int ViewsCount { get; set; }
 
