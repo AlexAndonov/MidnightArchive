@@ -10,7 +10,7 @@ namespace MidnightArchive.Core.DTOs.CommentDTOs
 	{
 		public Guid Id { get; set; }
 
-		[Required(ErrorMessage = RequiredErrorMessage)]
+		[Required(ErrorMessage = FieldRequiredErrorMessage)]
 		[StringLength(CommentContentMaxLength, MinimumLength = CommentContentMinLength, ErrorMessage = RequiredLengthMessage)]
 		public string Content { get; set; } = null!;
 

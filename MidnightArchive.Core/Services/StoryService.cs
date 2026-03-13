@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.EntityFrameworkCore;
+using MidnightArchive.Core.Constants;
 using MidnightArchive.Core.Contracts;
 using MidnightArchive.Core.DTOs.StoryDTOs;
 using MidnightArchive.Data;
@@ -13,12 +13,14 @@ namespace MidnightArchive.Core.Services
 	{
 		private readonly ApplicationDbContext context;
 		private readonly IMapper mapper;
+		private readonly ICacheService cacheService;
 
-		public StoryService(ApplicationDbContext _context, IMapper _mapper)
+		public StoryService(ApplicationDbContext _context, IMapper _mapper, ICacheService _cacheService)
 		{
 			context = _context;
 			mapper = _mapper;
-		}
+			cacheService = _cacheService;
+        }
 
 		public async Task<StoryDetailDto> AddAsync(StoryCreateDto model, string userId)
 		{
@@ -37,7 +39,10 @@ namespace MidnightArchive.Core.Services
 			await context.AddAsync(story);
 			await context.SaveChangesAsync();
 
-			return mapper.Map<StoryDetailDto>(story);
+            await cacheService.RemoveAsync(CacheKeys.StoriesAll);
+            await cacheService.RemoveAsync(CacheKeys.StoriesByCategory(story.CategoryId));
+
+            return mapper.Map<StoryDetailDto>(story);
 		}
 
 		public async Task<bool> EditAsync(StoryEditDto model)
@@ -56,49 +61,73 @@ namespace MidnightArchive.Core.Services
 
 			await context.SaveChangesAsync();
 
-			return true;
+            await cacheService.RemoveAsync(CacheKeys.StoriesAll);
+            await cacheService.RemoveAsync(CacheKeys.StoriesByCategory(story.CategoryId));
+
+            return true;
 		}
 
 		public async Task<IEnumerable<StorySummaryDto>> GetAllAsync()
 		{
-			return await context.Stories
-					.Where(s => !s.IsDeleted)
+			var cacheKey = CacheKeys.StoriesAll;
+
+			var cachedStories = await cacheService.GetAsync<IEnumerable<StorySummaryDto>>(cacheKey);
+
+			if (cachedStories != null)
+			{
+				return cachedStories;
+			}
+
+            List<StorySummaryDto> stories = await context.Stories
+					.AsNoTracking()
+                    .Where(s => !s.IsDeleted)
 					.ProjectTo<StorySummaryDto>(mapper.ConfigurationProvider)
 					.ToListAsync();
+
+			await cacheService.SetAsync(cacheKey, stories, TimeSpan.FromMinutes(10));
+
+			return stories;
 		}
 
 		public async Task<StoryDetailDto?> GetByIdAsync(Guid id)
 		{
-			var story = await context.Stories.FirstOrDefaultAsync(s => s.Id == id && !s.IsDeleted);
-
-			if (story == null)
-			{
-				return null;
-			}
-
-			return mapper.Map<StoryDetailDto>(story);
-		}
+            return await context.Stories
+					.AsNoTracking()
+					.Where(s => s.Id == id && !s.IsDeleted)
+					.ProjectTo<StoryDetailDto>(mapper.ConfigurationProvider)
+					.FirstOrDefaultAsync();
+        }
 
 		public async Task<StoryEditDto?> GetByIdForEditAsync(Guid id)
 		{
-			var story = await context.Stories.FirstOrDefaultAsync(s => s.Id == id && !s.IsDeleted);
-
-			if (story == null)
-			{
-				return null;
-			}
-
-			return mapper.Map<StoryEditDto>(story);
-		}
+            return await context.Stories
+                   .AsNoTracking()
+                   .Where(s => s.Id == id && !s.IsDeleted)
+                   .ProjectTo<StoryEditDto>(mapper.ConfigurationProvider)
+                   .FirstOrDefaultAsync();
+        }
 
 		public async Task<IEnumerable<StorySummaryDto>> GetStoriesByCategoryAsync(int categoryId)
 		{
-			return await context.Stories
+            var cacheKey = CacheKeys.StoriesByCategory(categoryId);
+
+            var cachedStories = await cacheService.GetAsync<IEnumerable<StorySummaryDto>>(cacheKey);
+
+            if (cachedStories != null)
+            {
+                return cachedStories;
+            }
+
+            var stories = await context.Stories
 				.Where(s => !s.IsDeleted && s.CategoryId == categoryId)
 				.AsNoTracking()
 				.ProjectTo<StorySummaryDto>(mapper.ConfigurationProvider)
 				.ToListAsync();
-		}
+
+            await cacheService.SetAsync(cacheKey, stories, TimeSpan.FromMinutes(10));
+
+			return stories;
+        }
 
 		public async Task<bool> HardDeleteAsync(Guid id)
 		{
@@ -112,7 +141,10 @@ namespace MidnightArchive.Core.Services
 			context.Remove(story);
 			await context.SaveChangesAsync();
 
-			return true;
+			await cacheService.RemoveAsync(CacheKeys.StoriesAll);
+            await cacheService.RemoveAsync(CacheKeys.StoriesByCategory(story.CategoryId));
+
+            return true;
 		}
 
 		public async Task<bool> SoftDeleteAsync(Guid id)
@@ -127,7 +159,10 @@ namespace MidnightArchive.Core.Services
 			story.IsDeleted = true;
 			await context.SaveChangesAsync();
 
-			return true;
+            await cacheService.RemoveAsync(CacheKeys.StoriesAll);
+            await cacheService.RemoveAsync(CacheKeys.StoriesByCategory(story.CategoryId));
+
+            return true;
 		}
 	}
 }

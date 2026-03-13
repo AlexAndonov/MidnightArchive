@@ -16,6 +16,7 @@ namespace Microsoft.Extensions.DependencyInjection
 		{
 			services.AddScoped<ICategoryService, CategoryService>();
 			services.AddScoped<IStoryService, StoryService>();
+			services.AddScoped<ICacheService, RedisCacheService>();
 
 
 			services.AddAutoMapper(cfg => cfg.AddProfile<CategoryProfile>());

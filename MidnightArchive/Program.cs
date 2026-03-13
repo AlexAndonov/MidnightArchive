@@ -18,7 +18,13 @@ namespace MidnightArchive
 			builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 			builder.Services.AddControllersWithViews();
 
-			var app = builder.Build();
+			builder.Services.AddStackExchangeRedisCache(options =>
+			{
+				options.Configuration = builder.Configuration["Redis:ConnectionString"];
+				options.InstanceName = "MidnightArchive:";
+            });
+
+            var app = builder.Build();
 
 			// Configure the HTTP request pipeline.
 			if (app.Environment.IsDevelopment())
