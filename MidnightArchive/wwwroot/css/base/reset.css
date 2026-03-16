@@ -1,0 +1,49 @@
+﻿*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    min-height: 100vh;
+    text-rendering: optimizeSpeed;
+    background-color: var(--bg-primary);
+    line-height: 1.6;
+}
+
+ul,
+ol {
+    list-style: none;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+    color: var(--text-primary);
+}
+
+button,
+input,
+textarea,
+select {
+    font: inherit;
+    cursor: pointer;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+    display: block;
+    max-width: 100%;
+}

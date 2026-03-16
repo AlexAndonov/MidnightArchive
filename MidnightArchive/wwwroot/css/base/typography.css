@@ -1,0 +1,23 @@
+﻿@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&display=swap');
+
+body {
+    font-family: "Cinzel", sans-serif;
+    font-size: 1rem;
+    color: var(--text-primary);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: 'Cinzel', serif;
+    color: var(--text-primary);
+}
+
+p {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-bottom: 1.25rem;
+}

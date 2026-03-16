@@ -1,0 +1,18 @@
+﻿:root {
+    --bg-primary: #0b0d12;
+    --bg-secondary: #12141b;
+    --bg-elevated: #181b24;
+
+    --text-primary: #c8c8c8;
+    --text-secondary: #a1a1b3;
+    --text-third: #0b0d12;
+
+    --accent-primary: #8b1e2d;
+
+    --border-color: #232634;
+    --shadow-soft: 0 10px 40px rgba(0, 0, 0, 0.6);
+
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+}
