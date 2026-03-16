@@ -1,0 +1,25 @@
+﻿nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    text-transform: uppercase;
+}
+
+nav ul {
+    display: flex;
+    gap: 1rem;
+    font-weight: bold;
+    align-items: center;
+}
+
+.header-buttons {
+    display: flex;
+    gap: 2rem;
+}
+
+.header-buttons .btn-primary:hover {
+    color: var(--text-third);
+}

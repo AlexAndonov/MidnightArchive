@@ -1,8 +1,152 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿<section class="hero">
+    <div class="hero-text">
+        <h1>TRUE SCARY STORIES BASED ON REAL EXPERIENCES</h1>
+        <h4 class="hero-subtitle">
+            Real-life horror encounters, paranormal experiences and the darkest
+            stories shared by people around the world.
+        </h4>
+        <a asp-controller="Story" asp-action="Create"  class="btn btn-primary">Write Your Story</a>
+    </div>
+    <div class="hero-image"></div>
+</section>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<section class="top-stories">
+    <h2 class="section-title">Top Stories of the Month</h2>
+    <div class="story-grid">
+        <article class="story-card">
+            <h3>The Haunting of Elm Street</h3>
+            <p class="story-excerpt">Strange sounds at midnight… the doors locked themselves.</p>
+            <div class="story-meta-wrapper">
+                <div class="story-meta">
+                    <span>👁 23.4k</span>
+                    <span>⭐ 4.9</span>
+                </div>
+                <button class="btn btn-outline">Read</button>
+            </div>
+        </article>
+        <article class="story-card">
+            <h3>Whisper in the Woods</h3>
+            <p class="story-excerpt">Footsteps behind me… but I was alone.</p>
+            <div class="story-meta-wrapper">
+                <div class="story-meta">
+                    <span>👁 18.7k</span>
+                    <span>⭐ 4.8</span>
+                </div>
+                <button class="btn btn-outline">Read</button>
+            </div>
+        </article>
+        <article class="story-card">
+            <h3>The Forgotten Room</h3>
+            <p class="story-excerpt">A door in my house I never knew existed…</p>
+            <div class="story-meta-wrapper">
+                <div class="story-meta">
+                    <span>👁 17.5k</span>
+                    <span>⭐ 4.7</span>
+                </div>
+                <button class="btn btn-outline">Read</button>
+            </div>
+        </article>
+        <article class="story-card">
+            <h3>Midnight Caller</h3>
+            <p class="story-excerpt">The phone rang at 3:17 AM. No one was supposed to call me…</p>
+            <div class="story-meta-wrapper">
+                <div class="story-meta">
+                    <span>👁 16.2k</span>
+                    <span>⭐ 4.6</span>
+                </div>
+                <button class="btn btn-outline">Read</button>
+            </div>
+        </article>
+        <article class="story-card">
+            <h3>Shadow on the Wall</h3>
+            <p class="story-excerpt">It moved on its own… I couldn’t believe my eyes.</p>
+            <div class="story-meta-wrapper">
+                <div class="story-meta">
+                    <span>👁 15.8k</span>
+                    <span>⭐ 4.6</span>
+                </div>
+                <button class="btn btn-outline">Read</button>
+            </div>
+        </article>
+        <article class="story-card">
+            <h3>The Silent House</h3>
+            <p class="story-excerpt">No lights, no sounds… just emptiness and dread.</p>
+            <div class="story-meta-wrapper">
+                <div class="story-meta">
+                    <span>👁 14.9k</span>
+                    <span>⭐ 4.5</span>
+                </div>
+                <button class="btn btn-outline">Read</button>
+            </div>
+        </article>
+        <article class="story-card">
+            <h3>Voices in the Attic</h3>
+            <p class="story-excerpt">They whispered my name… and I wasn’t alone.</p>
+            <div class="story-meta-wrapper">
+                <div class="story-meta">
+                    <span>👁 13.7k</span>
+                    <span>⭐ 4.5</span>
+                </div>
+                <button class="btn btn-outline">Read</button>
+            </div>
+        </article>
+        <article class="story-card">
+            <h3>The Vanishing Light</h3>
+            <p class="story-excerpt">Streetlights went out… and I saw it standing there.</p>
+            <div class="story-meta-wrapper">
+                <div class="story-meta">
+                    <span>👁 12.9k</span>
+                    <span>⭐ 4.4</span>
+                </div>
+                <button class="btn btn-outline">Read</button>
+            </div>
+        </article>
+        <article class="story-card">
+            <h3>Under the Bed</h3>
+            <p class="story-excerpt">I heard breathing… but no one was there.</p>
+            <div class="story-meta-wrapper">
+                <div class="story-meta">
+                    <span>👁 12.3k</span>
+                    <span>⭐ 4.4</span>
+                </div>
+                <button class="btn btn-outline">Read</button>
+            </div>
+        </article>
+        <article class="story-card">
+            <h3>Mirror Reflection</h3>
+            <p class="story-excerpt">My reflection moved… but I didn’t.</p>
+            <div class="story-meta-wrapper">
+                <div class="story-meta">
+                    <span>👁 11.8k</span>
+                    <span>⭐ 4.3</span>
+                </div>
+                <button class="btn btn-outline">Read</button>
+            </div>
+        </article>
+    </div>
+</section>
+
+
+<section class="featured-categories">
+    <h2 class="section-title">Featured Categories</h2>
+    <div class="categories-grid">
+        <article class="category-card">
+            <h3>Horror Stories</h3>
+            <p>Explore the scariest tales from around the world.</p>
+            <span>👁 2.9k</span>
+            <a class="btn btn-outline">Explore Stories</a>
+        </article>
+        <article class="category-card">
+            <h3>Paranormal Encounters</h3>
+            <p>Real stories of ghostly encounters and unexplained phenomena.</p>
+            <span>👁 2.9k</span>
+            <a class="btn btn-outline">Explore Stories</a>
+        </article>
+        <article class="category-card">
+            <h3>Urban Legends</h3>
+            <p>Legends that chill to the bone and have been told for generations.</p>
+            <span>👁 2.9k</span>
+            <a class="btn btn-outline">Explore Stories</a>
+        </article>
+    </div>
+</section>
