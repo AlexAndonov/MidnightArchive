@@ -70,12 +70,18 @@ namespace MidnightArchive.Core.Services
 
 		public async Task<IEnumerable<CategoryListDto>> GetAllAsync()
 		{
-			var categories = await context.Categories
-				.Where(c => !c.IsDeleted)     
-				.AsNoTracking()
-				.ToListAsync();
-
-			return mapper.Map <IEnumerable<CategoryListDto>>(categories);
+			return await context.Categories
+				   .Where(c => !c.IsDeleted)
+				   .Select(c => new CategoryListDto
+				   {
+					   Id = c.Id,
+					   Title = c.Title,
+					   Description = c.Description,
+					   StoriesCount = c.Stories.Count(s => !s.IsDeleted)
+				   })
+				   .OrderByDescending(c => c.StoriesCount)
+				   .AsNoTracking()
+				   .ToListAsync();
 		}
 
 		public async Task<CategoryDetailDto?> GetByIdAsync(int id)

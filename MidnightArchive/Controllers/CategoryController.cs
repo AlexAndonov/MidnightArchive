@@ -23,14 +23,14 @@ namespace MidnightArchive.Controllers
 		}
 
 		[HttpGet]
-		public async Task<IActionResult> Details(int id)
+		public async Task<IActionResult> Details(int Id)
 		{
-			if (id <= 0)
+			if (Id <= 0)
 			{
 				return BadRequest();
 			}
 
-			CategoryDetailDto? category = await service.GetByIdAsync(id);
+			CategoryDetailDto? category = await service.GetByIdAsync(Id);
 
 			if (category == null)
 			{
@@ -61,14 +61,14 @@ namespace MidnightArchive.Controllers
 		}
 
 		[HttpGet]
-		public async Task<IActionResult> Edit(int id)
+		public async Task<IActionResult> Edit(int Id)
 		{
-			if (id <= 0)
+			if (Id <= 0)
 			{
 				return BadRequest();
 			}
 
-			CategoryEditDto? category = await service.GetForEditAsync(id);
+			CategoryEditDto? category = await service.GetForEditAsync(Id);
 
 			if (category == null)
 			{
@@ -98,14 +98,14 @@ namespace MidnightArchive.Controllers
 		}
 
 		[HttpGet]
-		public async Task<IActionResult> Delete(int id)
+		public async Task<IActionResult> Delete(int Id)
 		{
-			if (id <= 0)
+			if (Id <= 0)
 			{
 				return BadRequest();
 			}
 
-			CategoryDetailDto? category = await service.GetByIdAsync(id);
+			CategoryDetailDto? category = await service.GetByIdAsync(Id);
 
 			if (category == null)
 			{
