@@ -1,0 +1,65 @@
+﻿@model IEnumerable<MidnightArchive.Core.DTOs.CategoryDTOs.CategoryListDto>
+
+@{
+    ViewData["Title"] = "Categories";
+}
+<section class="categories-section">
+
+    <div class="categories-header">
+        <h1>Explore Stories</h1>
+        <p>Find your next nightmare</p>
+    </div>
+    @if (Model == null || !Model.Any())
+    {
+        <p class="empty-state">No categories yet.</p>
+    }
+    else
+    {
+        <div class="categories-grid">
+            @foreach (var category in Model)
+            {
+                <div class="category-card">
+
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <div class="category-admin">
+                            <a asp-action="Edit" asp-route-id="@category.Id" class="icon-btn">
+                                <span class="material-symbols-outlined">edit</span>
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@category.Id" class="icon-btn">
+                                <span class="material-symbols-outlined">delete</span>
+                            </a>
+                        </div>
+                    }
+
+                    <div class="category-content">
+                        <h2 class="category-title">@category.Title</h2>
+
+                        <p class="category-description">
+                            @(string.IsNullOrWhiteSpace(category.Description)
+                                ? "No description yet."
+                                : category.Description.Length > 100
+                                    ? category.Description.Substring(0, 100) + "..."
+                                    : category.Description)
+                        </p>
+
+                        <div class="category-meta">
+                            <span class="story-count">
+                                @category.StoriesCount @(category.StoriesCount == 1 ? "story" : "stories")
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="category-footer">
+                        <a asp-controller="Story"
+                               asp-action="ByCategory"
+                               asp-route-id="@category.Id"
+                               class="btn btn-primary category-btn">
+                            Explore
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</section>
