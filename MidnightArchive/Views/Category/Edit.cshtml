@@ -1,0 +1,20 @@
+﻿@model MidnightArchive.Core.DTOs.CategoryDTOs.CategoryEditDto
+
+@{
+    ViewData["Title"] = "Edit Category";
+    ViewData["Action"] = "Edit";
+    ViewData["ButtonText"] = "Save Changes";
+}
+
+<section class="form-section">
+    <div class="form-card">
+        <h2 class="form-title">Edit Category</h2>
+
+        <partial name="_CategoryForm" model="Model" />
+    </div>
+</section>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

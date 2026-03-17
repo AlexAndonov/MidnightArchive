@@ -43,7 +43,7 @@ namespace MidnightArchive.Controllers
 		[HttpGet]
 		public IActionResult Create()
 		{
-			return View();
+			return View(new CategoryCreateDto());
 		}
 
 		[HttpPost]

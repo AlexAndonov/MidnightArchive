@@ -1,0 +1,19 @@
+﻿@model MidnightArchive.Core.DTOs.CategoryDTOs.CategoryCreateDto
+
+@{
+    ViewData["Title"] = "Create Category";
+    ViewData["Action"] = "Create";
+    ViewData["ButtonText"] = "Create";
+}
+
+<section class="form-section">
+    <div class="form-card">
+        <h2 class="form-title">Create Category</h2>
+
+        <partial name="_CategoryForm" model="Model" />
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
