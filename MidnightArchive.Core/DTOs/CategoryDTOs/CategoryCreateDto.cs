@@ -3,14 +3,8 @@ using static MidnightArchive.Infra.Data.Constants.ValidationConstants;
 
 namespace MidnightArchive.Core.DTOs.CategoryDTOs
 {
-	public class CategoryCreateDto
-	{
-		[Required(ErrorMessage = FieldRequiredErrorMessage)]
-		[StringLength(CategoryTitleMaxLength, MinimumLength = CategoryTitleMinLength, ErrorMessage = RequiredLengthMessage)]
-		public string Title { get; set; } = null!;
+	public class CategoryCreateDto : CategoryFormDto
 
-		[Required(ErrorMessage = FieldRequiredErrorMessage)]
-		[StringLength(CategoryDescriptionMaxLength, MinimumLength = CategoryDescriptionMinLength, ErrorMessage = RequiredLengthMessage)]
-		public string Description { get; set; } = null!;
+    {
 	}
 }
