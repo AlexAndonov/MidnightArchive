@@ -23,14 +23,14 @@ namespace MidnightArchive.Controllers
 		}
 
 		[HttpGet]
-		public async Task<IActionResult> Details(int Id)
+		public async Task<IActionResult> Details(int Id, int page = 1, int pageSize = 10)
 		{
 			if (Id <= 0)
 			{
 				return BadRequest();
 			}
 
-			CategoryDetailDto? category = await service.GetByIdAsync(Id);
+			CategoryDetailDto? category = await service.GetByIdAsync(Id, page, pageSize);
 
 			if (category == null)
 			{
