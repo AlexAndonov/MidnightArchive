@@ -24,6 +24,13 @@ namespace MidnightArchive.Core.Services
 
 		public async Task<StoryDetailDto> AddAsync(StoryCreateDto model, string userId)
 		{
+			var user = await context.Users
+					.Where(u => u.Id == userId)
+					.Select(u => new { u.UserName })
+					.FirstOrDefaultAsync();
+
+			string? authorName = model.IsAnonymous ? null : user?.UserName ?? "Unknown";
+
 			Story story = new Story()
 			{
 				Title = model.Title,
@@ -120,6 +127,7 @@ namespace MidnightArchive.Core.Services
 
             var stories = await context.Stories
 				.Where(s => !s.IsDeleted && s.CategoryId == categoryId)
+				.Include(s => s.Author)
 				.AsNoTracking()
 				.ProjectTo<StorySummaryDto>(mapper.ConfigurationProvider)
 				.ToListAsync();
