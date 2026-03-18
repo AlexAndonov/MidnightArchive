@@ -1,0 +1,71 @@
+﻿.form-section {
+    min-height: 80vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: radial-gradient(circle at top, rgba(255,255,255,0.05), transparent 60%);
+}
+
+
+.form-card {
+    width: 100%;
+    max-width: 480px;
+    background-color: var(--bg-elevated);
+    padding: 2rem;
+    border-radius: var(--radius-md);
+    box-shadow: 0 0 25px rgba(0,0,0,0.5);
+}
+
+
+.form-title {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: var(--accent-primary);
+    text-transform: uppercase;
+}
+
+
+.form {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1.2rem;
+}
+
+.form-group input,
+.form-group textarea {
+    padding: 0.6rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--bg-secondary);
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 8px var(--accent-primary);
+}
+
+.validation {
+    color: red;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+}
+
+.form-actions .btn {
+    width: 48%;
+}
