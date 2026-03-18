@@ -13,7 +13,11 @@ namespace MidnightArchive.Core.Mappings
 		{
 			CreateMap<Story, StoryDetailDto>();
 			CreateMap<Story, StoryEditDto>();
-			CreateMap<Story, StorySummaryDto>();
+			CreateMap<Story, StorySummaryDto>()
+						.ForMember(
+							dest => dest.AuthorName,
+							opt => opt.MapFrom(src => src.IsAnonymous ? null : src.Author.UserName)
+						);
 		}
 	}
 }
