@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using MidnightArchive.Core.Contracts;
 using MidnightArchive.Core.DTOs.CategoryDTOs;
 using MidnightArchive.Core.DTOs.CommentDTOs;
+using MidnightArchive.Core.DTOs.Common;
 using MidnightArchive.Core.DTOs.StoryDTOs;
 using MidnightArchive.Data;
 using MidnightArchive.Infra.Data.Models;
@@ -98,6 +99,57 @@ namespace MidnightArchive.Core.Services
 			}
 
 			return mapper.Map<CategoryDetailDto>(category);
+		}
+
+		public async Task<CategoryDetailDto?> GetByIdAsync(int id, int page, int pageSize)
+		{
+			var category = await context.Categories
+				.Where(c => c.Id == id && !c.IsDeleted)
+				.Include(c => c.Stories.Where(s => !s.IsDeleted))
+					.ThenInclude(s => s.Author)
+				.AsNoTracking()
+				.FirstOrDefaultAsync();
+
+			if (category == null)
+			{
+				return null;
+			}
+
+			var storiesQuery = category.Stories
+				.Where(s => !s.IsDeleted)
+				.OrderByDescending(s => s.CreatedOn);
+
+			var totalStories = storiesQuery.Count();
+
+			var stories = storiesQuery
+				.Skip((page - 1) * pageSize)
+				.Take(pageSize)
+				.Select(s => new StorySummaryDto
+				{
+					Id = s.Id,
+					Title = s.Title,
+					Preview = s.Content.Length > 100 ? s.Content.Substring(0, 100) + "..." : s.Content,
+					CreatedOn = s.CreatedOn,
+					AuthorName = s.Author.UserName,
+					ViewsCount = s.ViewsCount,
+					LikesCount = s.LikesCount,
+					IsAnonymous = s.IsAnonymous
+				})
+				.ToList();
+
+			return new CategoryDetailDto
+			{
+				Id = category.Id,
+				Title = category.Title,
+				Description = category.Description,
+				Stories = new PagedResult<StorySummaryDto>
+				{
+					Items = stories,
+					TotalCount = totalStories,
+					Page = page,
+					PageSize = pageSize
+				}
+			};
 		}
 
 		public async Task<CategoryEditDto?> GetForEditAsync(int id)
