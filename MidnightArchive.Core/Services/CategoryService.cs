@@ -93,12 +93,35 @@ namespace MidnightArchive.Core.Services
 				.Include(c => c.Stories.Where(s => !s.IsDeleted))
 				.FirstOrDefaultAsync();
 
-			if (category == null)
-			{
-				return null;
-			}
+			if (category == null) return null;
 
-			return mapper.Map<CategoryDetailDto>(category);
+			return new CategoryDetailDto
+			{
+				Id = category.Id,
+				Title = category.Title,
+				Description = category.Description,
+				Stories = new PagedResult<StorySummaryDto>
+				{
+					Items = category.Stories
+						.Where(s => !s.IsDeleted)
+						.OrderByDescending(s => s.CreatedOn)
+						.Select(s => new StorySummaryDto
+						{
+							Id = s.Id,
+							Title = s.Title,
+							Preview = s.Content.Length > 100 ? s.Content.Substring(0, 100) + "..." : s.Content,
+							CreatedOn = s.CreatedOn,
+							AuthorName = s.Author?.UserName ?? string.Empty,
+							ViewsCount = s.ViewsCount,
+							LikesCount = s.LikesCount,
+							IsAnonymous = s.IsAnonymous
+						})
+						.ToList(),
+					TotalCount = category.Stories.Count(s => !s.IsDeleted),
+					Page = 1,
+					PageSize = category.Stories.Count(s => !s.IsDeleted)
+				}
+			};
 		}
 
 		public async Task<CategoryDetailDto?> GetByIdAsync(int id, int page, int pageSize)
@@ -144,10 +167,24 @@ namespace MidnightArchive.Core.Services
 				Description = category.Description,
 				Stories = new PagedResult<StorySummaryDto>
 				{
-					Items = stories,
-					TotalCount = totalStories,
-					Page = page,
-					PageSize = pageSize
+					Items = category.Stories
+						.Where(s => !s.IsDeleted)
+						.OrderByDescending(s => s.CreatedOn)
+						.Select(s => new StorySummaryDto
+						{
+							Id = s.Id,
+							Title = s.Title,
+							Preview = s.Content.Length > 100 ? s.Content.Substring(0, 100) + "..." : s.Content,
+							CreatedOn = s.CreatedOn,
+							AuthorName = s.Author?.UserName ?? string.Empty,
+							ViewsCount = s.ViewsCount,
+							LikesCount = s.LikesCount,
+							IsAnonymous = s.IsAnonymous
+						})
+						.ToList(),
+					TotalCount = category.Stories.Count(s => !s.IsDeleted),
+					Page = 1,
+					PageSize = category.Stories.Count(s => !s.IsDeleted)
 				}
 			};
 		}
