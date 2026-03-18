@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using MidnightArchive.Core.Contracts;
 using MidnightArchive.Core.DTOs.StoryDTOs;
 using System.Security.Claims;
@@ -62,8 +63,11 @@ namespace MidnightArchive.Controllers
 
 
 		[HttpGet]
-		public IActionResult Create()
+		public async Task<IActionResult> Create()
 		{
+			var categories = await categoryService.GetAllAsync();
+
+			ViewBag.Categories = new SelectList(categories, "Id", "Title");
 			return View();
 		}
 
