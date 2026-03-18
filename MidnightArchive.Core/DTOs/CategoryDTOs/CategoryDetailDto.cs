@@ -1,4 +1,5 @@
-﻿using MidnightArchive.Core.DTOs.StoryDTOs;
+﻿using MidnightArchive.Core.DTOs.Common;
+using MidnightArchive.Core.DTOs.StoryDTOs;
 using System.ComponentModel.DataAnnotations;
 using static MidnightArchive.Infra.Data.Constants.ValidationConstants;
 
@@ -12,6 +13,6 @@ namespace MidnightArchive.Core.DTOs.CategoryDTOs
 
 		public string Description { get; set; } = null!;
 
-		public ICollection<StorySummaryDto> Stories { get; set; } = new List<StorySummaryDto>();
+		public PagedResult<StorySummaryDto> Stories { get; set; } = null!;
 	}
 }
