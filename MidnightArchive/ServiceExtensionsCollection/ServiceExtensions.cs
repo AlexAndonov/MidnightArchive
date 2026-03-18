@@ -19,8 +19,12 @@ namespace Microsoft.Extensions.DependencyInjection
 			services.AddScoped<ICacheService, RedisCacheService>();
 
 
-			services.AddAutoMapper(cfg => cfg.AddProfile<CategoryProfile>());
-			services.AddAutoMapper(cfg => cfg.AddProfile<StoryProfile>());
+			services.AddAutoMapper(cfg =>
+			{
+				cfg.AddProfile<CategoryProfile>();
+				cfg.AddProfile<StoryProfile>();
+				cfg.AddProfile<CommentProfile>();
+			});
 
 			return services;
 		}
