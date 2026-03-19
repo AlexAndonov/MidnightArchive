@@ -126,6 +126,16 @@ namespace MidnightArchive.Core.Services
 
 		public async Task<CategoryDetailDto?> GetByIdAsync(int id, int page, int pageSize)
 		{
+			if (page < 1)
+			{
+				page = 1;
+			}
+
+			if (pageSize < 1)
+			{
+				pageSize = 10;
+			}
+
 			var category = await context.Categories
 				.Where(c => c.Id == id && !c.IsDeleted)
 				.Include(c => c.Stories.Where(s => !s.IsDeleted))
@@ -151,9 +161,11 @@ namespace MidnightArchive.Core.Services
 				{
 					Id = s.Id,
 					Title = s.Title,
-					Preview = s.Content.Length > 100 ? s.Content.Substring(0, 100) + "..." : s.Content,
+					Preview = s.Content.Length > 100
+						? s.Content.Substring(0, 100) + "..."
+						: s.Content,
 					CreatedOn = s.CreatedOn,
-					AuthorName = s.Author.UserName,
+					AuthorName = s.Author?.UserName ?? string.Empty,
 					ViewsCount = s.ViewsCount,
 					LikesCount = s.LikesCount,
 					IsAnonymous = s.IsAnonymous
@@ -167,24 +179,10 @@ namespace MidnightArchive.Core.Services
 				Description = category.Description,
 				Stories = new PagedResult<StorySummaryDto>
 				{
-					Items = category.Stories
-						.Where(s => !s.IsDeleted)
-						.OrderByDescending(s => s.CreatedOn)
-						.Select(s => new StorySummaryDto
-						{
-							Id = s.Id,
-							Title = s.Title,
-							Preview = s.Content.Length > 100 ? s.Content.Substring(0, 100) + "..." : s.Content,
-							CreatedOn = s.CreatedOn,
-							AuthorName = s.Author?.UserName ?? string.Empty,
-							ViewsCount = s.ViewsCount,
-							LikesCount = s.LikesCount,
-							IsAnonymous = s.IsAnonymous
-						})
-						.ToList(),
-					TotalCount = category.Stories.Count(s => !s.IsDeleted),
-					Page = 1,
-					PageSize = category.Stories.Count(s => !s.IsDeleted)
+					Items = stories,
+					TotalCount = totalStories,
+					Page = page,
+					PageSize = pageSize
 				}
 			};
 		}
