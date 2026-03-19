@@ -17,6 +17,7 @@ namespace MidnightArchive.Core.DTOs.StoryDTOs
 		public string Content { get; set; } = null!;
 
 		[Required(ErrorMessage = FieldRequiredErrorMessage)]
+		[Display(Name = "Category")]
 		public int CategoryId { get; set; }
 
 		public bool IsAnonymous { get; set; }
