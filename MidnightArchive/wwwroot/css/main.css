@@ -10,3 +10,6 @@
 @import '../css/layout/auth-pages.css';
 @import '../css/layout/categories/categories-index.css';
 @import '../css/layout/categories/categories-form.css';
+@import '../css/layout/categories/categories-details.css';
+@import '../css/layout/stories/stories-create.css';
+@import '../css/layout/stories/stories-details.css';
