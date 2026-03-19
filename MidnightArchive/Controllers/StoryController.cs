@@ -100,12 +100,14 @@ namespace MidnightArchive.Controllers
 				return BadRequest();
 			}
 
-			var story = await service.GetByIdAsync(id);
+			var story = await service.GetByIdForEditAsync(id);
 
 			if (story == null)
 			{
 				return NotFound();
 			}
+
+			ViewBag.Categories = new SelectList(await categoryService.GetAllAsync(), "Id", "Title");
 
 			return View(story);
 		}
@@ -116,6 +118,7 @@ namespace MidnightArchive.Controllers
 		{
 			if (ModelState.IsValid == false)
 			{
+				ViewBag.Categories = new SelectList(await categoryService.GetAllAsync(), "Id", "Title");
 				return View(model);
 			}
 
