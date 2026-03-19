@@ -11,7 +11,12 @@ namespace MidnightArchive.Core.Mappings
 	{
 		public StoryProfile()
 		{
-			CreateMap<Story, StoryDetailDto>();
+			CreateMap<Story, StoryDetailDto>()
+				.ForMember(
+					dest => dest.CategoryName,
+					opt => opt.MapFrom(src => src.Category != null ? src.Category.Title : string.Empty)
+				);
+
 			CreateMap<Story, StoryEditDto>();
 			CreateMap<Story, StorySummaryDto>()
 						.ForMember(
