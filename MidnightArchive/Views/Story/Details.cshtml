@@ -1,0 +1,105 @@
+﻿@model MidnightArchive.Core.DTOs.StoryDTOs.StoryDetailDto
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<section class="story-details-page">
+    <div class="story-details-shell">
+
+        <article class="story-article">
+            <header class="story-hero">
+                <span>@Model.CategoryName</span>
+                <h1 class="story-title">@Model.Title</h1>
+
+                <div class="story-meta">
+                    @if (!Model.IsAnonymous && !string.IsNullOrWhiteSpace(Model.AuthorName))
+                    {
+                        <span class="story-meta-item">By @Model.AuthorName</span>
+                    }
+                    else
+                    {
+                        <span class="story-meta-item">Anonymous</span>
+                    }
+
+                    <span class="story-meta-item">@Model.CreatedOn.ToString("dd MMM yyyy")</span>
+
+                    @if (Model.ModifiedOn.HasValue)
+                    {
+                       <span class="story-meta-item">
+                                Edited @Model.ModifiedOn.Value.ToString("dd MMM yyyy")
+                       </span>
+                    }
+                </div>
+
+                <div class="story-stats-bar">
+                    <div class="story-stat">
+                        <span class="story-stat-value">@Model.ViewsCount</span>
+                        <span class="story-stat-label">Views</span>
+                    </div>
+                    <div class="story-stat">
+                        <span class="story-stat-value">@Model.LikesCount</span>
+                        <span class="story-stat-label">Likes</span>
+                    </div>
+                    <div class="story-stat">
+                        <span class="story-stat-value">@Model.Comments.Count</span>
+                        <span class="story-stat-label">Comments</span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="story-content-wrap">
+                <div class="story-content prose">
+                    @Model.Content
+                </div>
+            </div>
+
+            <footer class="story-footer-actions">
+                <a asp-action="Index" asp-controller="Story" class="btn btn-outline">
+                    ← Back to Stories
+                </a>
+            </footer>
+        </article>
+
+        <section class="story-comments-section">
+            <div class="story-comments-header">
+                <h2>Comments</h2>
+                <p>What readers are saying about this story.</p>
+            </div>
+
+            @if (Model.Comments.Any())
+            {
+                <div class="story-comments-list">
+                    @foreach (var comment in Model.Comments.OrderByDescending(c => c.CreatedOn))
+                    {
+                        <article class="comment-card">
+                            <div class="comment-card-header">
+                                <div class="comment-avatar">
+                                    @comment.Content.Substring(0, 1).ToUpper()
+                                </div>
+                                <div>
+                                    <p class="comment-author">Reader</p>
+                                    <span class="comment-date">@comment.CreatedOn.ToString("dd MMM yyyy")</span>
+                                </div>
+                            </div>
+
+                            <p class="comment-content">@comment.Content</p>
+                        </article>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="comments-empty-state">
+                    <h3>No comments yet</h3>
+                    <p>This story has no comments yet!</p>
+                </div>
+            }
+        </section>
+
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
