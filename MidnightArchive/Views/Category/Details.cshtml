@@ -1,37 +1,77 @@
 ﻿@model CategoryDetailDto
 
-<h1>@Model.Title</h1>
-<p>@Model.Description</p>
+<section class="category-details-page">
+    <header class="category-hero">
+        <h1 class="category-hero-title">@Model.Title</h1>
+        <p class="category-hero-description">@Model.Description</p>
+        <span>@Model.Stories.TotalCount @(Model.Stories.TotalCount == 1 ? "story" : "stories")</span>
+    </header>
 
-@if (!Model.Stories.Items.Any())
-{
-    <p>No stories in this category yet.</p>
-}
-else
-{
-    <div class="stories-grid">
-        @foreach (var story in Model.Stories.Items)
-        {
-            <div class="story-card">
-                <h3>@story.Title</h3>
-                <p>@story.Preview</p>
-                <small>By @story.AuthorName on @story.CreatedOn.ToShortDateString()</small>
-                <a asp-controller="Story" asp-action="Details" asp-route-id="@story.Id" class="btn btn-primary">Read More</a>
+    @if (!Model.Stories.Items.Any())
+    {
+        <div class="empty-state-card">
+            <h2>No stories yet</h2>
+            <p>This category is waiting for its first story.</p>
+        </div>
+    }
+    else
+    {
+        <section class="category-stories-section">
+            <div class="category-stories-grid">
+                @foreach (var story in Model.Stories.Items)
+                {
+                    <article class="category-story-card">
+                        <h2 class="category-story-title">@story.Title</h2>
+
+                        <p class="category-story-preview">@story.Preview</p>
+
+                        <div class="category-story-meta">
+                            <span>
+                                @(story.IsAnonymous ? "Anonymous" : story.AuthorName)
+                            </span>
+                            <span>@story.CreatedOn.ToString("dd MMM yyyy")</span>
+                        </div>
+
+                        <div class="category-story-stats">
+                            <span>👁 @story.ViewsCount</span>
+                            <span>⭐ @story.LikesCount</span>
+                        </div>
+
+                        <a asp-controller="Story"
+                               asp-action="Details"
+                               asp-route-id="@story.Id"
+                               class="btn btn-primary category-story-btn">
+                            Read More
+                        </a>
+                    </article>
+                }
             </div>
-        }
-    </div>
+        </section>
 
-    <div class="pagination">
-        @if (Model.Stories.Page > 1)
-        {
-            <a asp-action="Details" asp-route-id="@Model.Id" asp-route-page="@(Model.Stories.Page - 1)" class="btn btn-outline">Prev</a>
-        }
+        <nav class="pagination-nav">
+            @if (Model.Stories.Page > 1)
+            {
+                <a asp-action="Details"
+                       asp-route-id="@Model.Id"
+                       asp-route-page="@(Model.Stories.Page - 1)"
+                       class="btn btn-outline">
+                    Prev
+                </a>
+            }
 
-        <span>Page @Model.Stories.Page of @Model.Stories.TotalPages</span>
+            <span class="pagination-current">
+                Page @Model.Stories.Page of @Model.Stories.TotalPages
+            </span>
 
-        @if (Model.Stories.Page < Model.Stories.TotalPages)
-        {
-            <a asp-action="Details" asp-route-id="@Model.Id" asp-route-page="@(Model.Stories.Page + 1)" class="btn btn-outline">Next</a>
-        }
-    </div>
-}
+            @if (Model.Stories.Page < Model.Stories.TotalPages)
+            {
+                <a asp-action="Details"
+                       asp-route-id="@Model.Id"
+                       asp-route-page="@(Model.Stories.Page + 1)"
+                       class="btn btn-outline">
+                    Next
+                </a>
+            }
+        </nav>
+    }
+</section>
