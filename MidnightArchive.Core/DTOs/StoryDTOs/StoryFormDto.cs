@@ -3,7 +3,7 @@ using static MidnightArchive.Infra.Data.Constants.ValidationConstants;
 
 namespace MidnightArchive.Core.DTOs.StoryDTOs
 {
-	public class StoryEditDto
+	public class StoryFormDto
 	{
 		public Guid Id { get; set; }
 
