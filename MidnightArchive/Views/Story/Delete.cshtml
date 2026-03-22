@@ -1,0 +1,61 @@
+﻿@model MidnightArchive.Core.DTOs.StoryDTOs.StoryFormDto
+
+@{
+    ViewData["Title"] = "Delete Story";
+}
+
+<section class="story-form-page story-delete-page">
+    <div class="story-form-card story-delete-card">
+        <div class="story-form-header story-delete-header">
+            <p class="story-form-eyebrow">Midnight Archive</p>
+            <h1>Delete Story</h1>
+            <p class="story-form-subtitle">
+                This action will remove the story from the archive. Review the details carefully before continuing.
+            </p>
+        </div>
+
+        <form asp-action="DeleteConfirmed" method="post" class="story-form-body">
+            <input type="hidden" asp-for="Id" />
+
+            <div class="delete-warning-box">
+                <strong>Warning:</strong> This action cannot be undone.
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Title" class="form-label"></label>
+                <input asp-for="Title" class="form-input" disabled />
+            </div>
+
+            <div class="form-group">
+                <label asp-for="CategoryId" class="form-label"></label>
+                <select asp-for="CategoryId"
+                        asp-items="ViewBag.Categories"
+                        class="form-input form-select"
+                        disabled>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Content" class="form-label"></label>
+                <textarea asp-for="Content"
+                          class="form-input form-textarea"
+                          disabled></textarea>
+            </div>
+
+            <div class="form-check-custom">
+                <input asp-for="IsAnonymous"
+                       class="form-check-custom-input"
+                       type="checkbox"
+                       disabled />
+                <label asp-for="IsAnonymous" class="form-check-custom-label">
+                    Post anonymously
+                </label>
+            </div>
+
+            <div class="story-form-actions">
+                <button type="submit" class="btn btn-primary">Delete Story</button>
+                <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline">Cancel</a>
+            </div>
+        </form>
+    </div>
+</section>
