@@ -26,9 +26,9 @@
 
                     @if (Model.ModifiedOn.HasValue)
                     {
-                       <span class="story-meta-item">
-                                Edited @Model.ModifiedOn.Value.ToString("dd MMM yyyy")
-                       </span>
+                        <span class="story-meta-item">
+                            Edited @Model.ModifiedOn.Value.ToString("dd MMM yyyy")
+                        </span>
                     }
                 </div>
 
@@ -46,6 +46,11 @@
                         <span class="story-stat-label">Comments</span>
                     </div>
                 </div>
+
+                <div class="story-action-buttons">
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline">Delete</a>
+                </div>
             </header>
 
             <div class="story-content-wrap">
@@ -55,7 +60,10 @@
             </div>
 
             <footer class="story-footer-actions">
-                <a asp-action="Index" asp-controller="Story" class="btn btn-outline">
+                <a asp-action="Details"
+                       asp-controller="Category"
+                       asp-route-id="@Model.CategoryId"
+                       class="btn btn-outline">
                     ← Back to Stories
                 </a>
             </footer>
