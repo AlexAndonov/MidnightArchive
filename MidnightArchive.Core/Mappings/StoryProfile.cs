@@ -17,7 +17,7 @@ namespace MidnightArchive.Core.Mappings
 					opt => opt.MapFrom(src => src.Category != null ? src.Category.Title : string.Empty)
 				);
 
-			CreateMap<Story, StoryEditDto>();
+			CreateMap<Story, StoryFormDto>();
 			CreateMap<Story, StorySummaryDto>()
 						.ForMember(
 							dest => dest.AuthorName,

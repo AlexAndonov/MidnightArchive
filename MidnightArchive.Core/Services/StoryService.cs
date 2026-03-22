@@ -52,7 +52,7 @@ namespace MidnightArchive.Core.Services
             return mapper.Map<StoryDetailDto>(story);
 		}
 
-		public async Task<bool> EditAsync(StoryEditDto model)
+		public async Task<bool> EditAsync(StoryFormDto model)
 		{
 			Story? story = await context.Stories.FirstOrDefaultAsync(s => s.Id == model.Id);
 
@@ -105,12 +105,12 @@ namespace MidnightArchive.Core.Services
 					.FirstOrDefaultAsync();
         }
 
-		public async Task<StoryEditDto?> GetByIdForEditAsync(Guid id)
+		public async Task<StoryFormDto?> GetByIdForEditAsync(Guid id)
 		{
             return await context.Stories
                    .AsNoTracking()
                    .Where(s => s.Id == id && !s.IsDeleted)
-                   .ProjectTo<StoryEditDto>(mapper.ConfigurationProvider)
+                   .ProjectTo<StoryFormDto>(mapper.ConfigurationProvider)
                    .FirstOrDefaultAsync();
         }
 
