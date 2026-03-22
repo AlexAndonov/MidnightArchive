@@ -4,59 +4,59 @@
     ViewData["Title"] = "Create Story";
 }
 
-<section class="story-create-page">
-        <div class="story-create-card">
-            <div class="story-create-header">
-                <p class="story-create-eyebrow">Midnight Archive</p>
-                <h1>Create Story</h1>
-                <p class="story-create-subtitle">
-                    Share your experience with the community. Write clearly, choose the right category, and decide whether you want to stay anonymous.
-                </p>
+<section class="story-form-page">
+    <div class="story-form-card">
+        <div class="story-form-header">
+            <p class="story-form-eyebrow">Midnight Archive</p>
+            <h1>Create Story</h1>
+            <p class="story-form-subtitle">
+                Share your experience with the community. Write clearly, choose the right category, and decide whether you want to stay anonymous.
+            </p>
+        </div>
+
+        <form asp-action="Create" method="post" class="story-form-body">
+            <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+
+            <div class="form-group">
+                <label asp-for="Title" class="form-label"></label>
+                <input asp-for="Title"
+                       class="form-input"
+                       placeholder="Enter a title that grabs attention" />
+                <span asp-validation-for="Title" class="form-error"></span>
             </div>
 
-            <form asp-action="Create" method="post" class="story-create-form">
-                <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+            <div class="form-group">
+                <label asp-for="CategoryId" class="form-label"></label>
+                <select asp-for="CategoryId"
+                        asp-items="ViewBag.Categories"
+                        class="form-input form-select">
+                    <option value="">Select Category</option>
+                </select>
+                <span asp-validation-for="CategoryId" class="form-error"></span>
+            </div>
 
-                <div class="form-group">
-                    <label asp-for="Title" class="form-label"></label>
-                    <input asp-for="Title"
-                           class="form-input"
-                           placeholder="Enter a title that grabs attention" />
-                    <span asp-validation-for="Title" class="form-error"></span>
-                </div>
+            <div class="form-group">
+                <label asp-for="Content" class="form-label"></label>
+                <textarea asp-for="Content"
+                          class="form-input form-textarea"
+                          placeholder="Write your full story here..."></textarea>
+                <span asp-validation-for="Content" class="form-error"></span>
+            </div>
 
-                <div class="form-group">
-                    <label asp-for="CategoryId" class="form-label"></label>
-                    <select asp-for="CategoryId"
-                            asp-items="ViewBag.Categories"
-                            class="form-input form-select">
-                        <option value="">Select Category</option>
-                    </select>
-                    <span asp-validation-for="CategoryId" class="form-error"></span>
-                </div>
+            <div class="form-check-custom">
+                <input asp-for="IsAnonymous" class="form-check-custom-input" type="checkbox" />
+                <label asp-for="IsAnonymous" class="form-check-custom-label">
+                    Post anonymously
+                </label>
+            </div>
 
-                <div class="form-group">
-                    <label asp-for="Content" class="form-label"></label>
-                    <textarea asp-for="Content"
-                              class="form-input form-textarea"
-                              placeholder="Write your full story here..."></textarea>
-                    <span asp-validation-for="Content" class="form-error"></span>
-                </div>
+            <div class="story-form-actions">
+                <button type="submit" class="btn btn-primary">Publish Story</button>
+                <a asp-action="Index" class="btn btn-outline">Back to Stories</a>
+            </div>
+        </form>
 
-                <div class="form-check-custom">
-                    <input asp-for="IsAnonymous" class="form-check-custom-input" type="checkbox" />
-                    <label asp-for="IsAnonymous" class="form-check-custom-label">
-                        Post anonymously
-                    </label>
-                </div>
-
-                <div class="story-create-actions">
-                    <button type="submit" class="btn btn-primary">Publish Story</button>
-                    <a asp-action="Index" class="btn btn-outline">Back to Stories</a>
-                </div>
-            </form>
-
-        </div>
+    </div>
 </section>
 
 @section Scripts {
