@@ -114,7 +114,7 @@ namespace MidnightArchive.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Edit(StoryEditDto model)
+		public async Task<IActionResult> Edit(StoryFormDto model)
 		{
 			if (ModelState.IsValid == false)
 			{
@@ -140,12 +140,14 @@ namespace MidnightArchive.Controllers
 				return BadRequest();
 			}
 
-			var story = await service.GetByIdAsync(id);
+			var story = await service.GetByIdForEditAsync(id);
 
 			if (story == null)
 			{
 				return NotFound();
 			}
+
+			ViewBag.Categories = new SelectList(await categoryService.GetAllAsync(), "Id", "Title");
 
 			return View(story);
 		}
