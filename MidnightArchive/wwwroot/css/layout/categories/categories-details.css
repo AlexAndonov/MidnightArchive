@@ -118,3 +118,15 @@
 .empty-state-card p {
     color: var(--text-secondary);
 }
+
+.category-action-buttons {
+    display: flex;
+    gap: 0.8rem;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+
+.category-action-buttons .btn {
+    min-width: 120px;
+    justify-content: center;
+}
