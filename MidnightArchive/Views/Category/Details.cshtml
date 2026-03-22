@@ -5,6 +5,10 @@
         <h1 class="category-hero-title">@Model.Title</h1>
         <p class="category-hero-description">@Model.Description</p>
         <span>@Model.Stories.TotalCount @(Model.Stories.TotalCount == 1 ? "story" : "stories")</span>
+        <div class="category-action-buttons">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
+            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline">Delete</a>
+        </div>
     </header>
 
     @if (!Model.Stories.Items.Any())
