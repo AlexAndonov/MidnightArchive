@@ -1,21 +1,22 @@
-﻿.story-create-page {
+﻿.story-form-page {
     min-height: 100vh;
     padding: 3rem 1.5rem 4rem;
     background: radial-gradient(circle at top, var(--bg-elevated), transparent 40%);
 }
-.story-create-card {
+
+.story-form-card {
     background: var(--bg-elevated);
     border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: var(--radius-lg);
     overflow: hidden;
 }
 
-.story-create-header {
+.story-form-header {
     padding: 2.5rem 2.5rem 1.5rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-.story-create-eyebrow {
+.story-form-eyebrow {
     margin-bottom: 0.75rem;
     color: var(--accent-primary);
     font-size: 0.82rem;
@@ -24,20 +25,20 @@
     text-transform: uppercase;
 }
 
-.story-create-header h1 {
+.story-form-header h1 {
     margin-bottom: 0.75rem;
     color: var(--text-primary);
     font-size: clamp(2rem, 4vw, 2.8rem);
     line-height: 1.1;
 }
 
-.story-create-subtitle {
+.story-form-subtitle {
     color: var(--text-secondary);
     line-height: 1.7;
     font-size: 1rem;
 }
 
-.story-create-form {
+.story-form-body {
     padding: 2rem 2.5rem 2.5rem;
 }
 
@@ -125,14 +126,14 @@
     user-select: none;
 }
 
-.story-create-actions {
+.story-form-actions {
     display: flex;
     gap: 1rem;
     flex-wrap: wrap;
     margin-top: 2rem;
 }
 
-.story-create-actions .btn {
+.story-form-actions .btn {
     min-width: 170px;
     justify-content: center;
 }

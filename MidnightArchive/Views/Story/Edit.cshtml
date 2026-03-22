@@ -1,20 +1,20 @@
-﻿@model MidnightArchive.Core.DTOs.StoryDTOs.StoryEditDto
+﻿@model MidnightArchive.Core.DTOs.StoryDTOs.StoryFormDto
 
 @{
     ViewData["Title"] = "Edit Story";
 }
 
-<section class="story-create-page">
-    <div class="story-create-card">
-        <div class="story-create-header">
-            <p class="story-create-eyebrow">Midnight Archive</p>
+<section class="story-form-page">
+    <div class="story-form-card">
+        <div class="story-form-header">
+            <p class="story-form-eyebrow">Midnight Archive</p>
             <h1>Edit Story</h1>
-            <p class="story-create-subtitle">
+            <p class="story-form-subtitle">
                 Update your story, improve the content, or move it to a better category.
             </p>
         </div>
 
-        <form asp-action="Edit" method="post" class="story-create-form">
+        <form asp-action="Edit" method="post" class="story-form-body">
             <input type="hidden" asp-for="Id" />
 
             <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
@@ -52,7 +52,7 @@
                 </label>
             </div>
 
-            <div class="story-create-actions">
+            <div class="story-form-actions">
                 <button type="submit" class="btn btn-primary">Save Changes</button>
                 <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline">Cancel</a>
             </div>
