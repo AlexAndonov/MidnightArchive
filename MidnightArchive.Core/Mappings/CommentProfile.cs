@@ -11,7 +11,12 @@ namespace MidnightArchive.Core.Mappings
 	{
 		public CommentProfile()
 		{
-			CreateMap<Comment, CommentDto>();
+			CreateMap<Comment, CommentDto>()
+				.ForMember
+				(
+					dest => dest.AuthorName,
+					opt => opt.MapFrom(src => src.Author.UserName)
+				);
 		}
 	}
 }
