@@ -10,5 +10,7 @@ namespace MidnightArchive.Core.DTOs.CommentDTOs
 		[Required(ErrorMessage = FieldRequiredErrorMessage)]
 		[StringLength(CommentContentMaxLength, MinimumLength = CommentContentMinLength, ErrorMessage = RequiredLengthMessage)]
 		public string Content { get; set; } = null!;
+
+		public Guid StoryId { get; set; }
 	}
 }
