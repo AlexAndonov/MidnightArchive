@@ -1,4 +1,5 @@
-﻿@model MidnightArchive.Core.DTOs.StoryDTOs.StoryDetailDto
+﻿@using System.Security.Claims
+@model MidnightArchive.Core.DTOs.StoryDTOs.StoryDetailDto
 
 @{
     ViewData["Title"] = Model.Title;
@@ -70,28 +71,90 @@
         </article>
 
         <section class="story-comments-section">
+            @{
+                var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            }
+
             <div class="story-comments-header">
                 <h2>Comments</h2>
                 <p>What readers are saying about this story.</p>
             </div>
 
-            @if (Model.Comments.Any())
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <form asp-controller="Comment" asp-action="Create" method="post" class="comment-create-form">
+                    <input type="hidden" name="StoryId" value="@Model.Id" />
+
+                    <div class="form-group">
+                        <label for="commentContent" class="form-label">Add Comment</label>
+                        <textarea id="commentContent"
+                                  name="Content"
+                                  class="form-input form-textarea comment-textarea"
+                                  placeholder="Write your comment here..."></textarea>
+                    </div>
+
+                    <div class="story-action-buttons">
+                        <button type="submit" class="btn btn-primary">Post Comment</button>
+                    </div>
+                </form>
+            }
+
+            @if (Model.Comments != null && Model.Comments.Any())
             {
                 <div class="story-comments-list">
                     @foreach (var comment in Model.Comments.OrderByDescending(c => c.CreatedOn))
                     {
                         <article class="comment-card">
                             <div class="comment-card-header">
-                                <div class="comment-avatar">
-                                    @comment.Content.Substring(0, 1).ToUpper()
-                                </div>
                                 <div>
-                                    <p class="comment-author">Reader</p>
-                                    <span class="comment-date">@comment.CreatedOn.ToString("dd MMM yyyy")</span>
+                                    <p class="comment-author">@comment.AuthorName</p>
+                                    <span class="comment-date">
+                                        @comment.CreatedOn.ToString("dd MMM yyyy")
+                                        @if (comment.ModifiedOn.HasValue)
+                                        {
+                                            <text> • Edited @comment.ModifiedOn.Value.ToString("dd MMM yyyy")</text>
+                                        }
+                                    </span>
                                 </div>
                             </div>
 
-                            <p class="comment-content">@comment.Content</p>
+                            <p class="comment-content js-comment-display">@comment.Content</p>
+
+                            @if (User.Identity?.IsAuthenticated == true && currentUserId == comment.AuthorId)
+                            {
+                                <form id="@($"edit-form-{comment.Id}")"
+                                      asp-controller="Comment"
+                                      asp-action="Edit"
+                                      method="post"
+                                      class="js-comment-form hidden">
+                                    <input type="hidden" name="Id" value="@comment.Id" />
+                                    <input type="hidden" name="StoryId" value="@Model.Id" />
+
+                                    <textarea name="Content"
+                                              class="form-input form-textarea comment-textarea js-comment-textarea">@comment.Content</textarea>
+                                </form>
+
+                                <div class="story-action-buttons comment-actions">
+                                    <button type="button" class="btn btn-primary js-edit-btn">Edit</button>
+
+                                    <form asp-controller="Comment" asp-action="Delete" method="post" class="js-delete-form">
+                                        <input type="hidden" name="id" value="@comment.Id" />
+                                        <input type="hidden" name="storyId" value="@Model.Id" />
+                                        <button type="submit" class="btn btn-outline">Delete</button>
+                                    </form>
+
+                                    <button type="submit"
+                                            form="@($"edit-form-{comment.Id}")"
+                                            class="btn btn-primary hidden js-save-btn">
+                                        Save
+                                    </button>
+
+                                    <button type="button"
+                                            class="btn btn-outline hidden js-cancel-btn">
+                                        Cancel
+                                    </button>
+                                </div>
+                            }
                         </article>
                     }
                 </div>
@@ -110,4 +173,49 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".comment-card").forEach(card => {
+            const comment = card.querySelector(".js-comment-display");
+            const form = card.querySelector(".js-comment-form");
+            const textarea = card.querySelector(".js-comment-textarea");
+
+            const editBtn = card.querySelector(".js-edit-btn");
+            const saveBtn = card.querySelector(".js-save-btn");
+            const cancelBtn = card.querySelector(".js-cancel-btn");
+            const deleteForm = card.querySelector(".js-delete-form");
+
+            if (!comment || !form || !textarea || !editBtn || !saveBtn || !cancelBtn) {
+                return;
+            }
+
+            const originalValue = textarea.value;
+
+            editBtn.addEventListener("click", () => {
+                comment.classList.add("hidden");
+                form.classList.remove("hidden");
+
+                editBtn.classList.add("hidden");
+                deleteForm?.classList.add("hidden");
+                saveBtn.classList.remove("hidden");
+                cancelBtn.classList.remove("hidden");
+
+                textarea.focus();
+            });
+
+            cancelBtn.addEventListener("click", () => {
+                textarea.value = originalValue;
+
+                form.classList.add("hidden");
+                comment.classList.remove("hidden");
+
+                editBtn.classList.remove("hidden");
+                deleteForm?.classList.remove("hidden");
+                saveBtn.classList.add("hidden");
+                cancelBtn.classList.add("hidden");
+             });
+         });
+        });
+    </script>
 }

@@ -1,0 +1,13 @@
+﻿.comment-create-form,
+.comment-edit-form {
+    margin-bottom: 1.5rem;
+}
+
+.comment-textarea {
+    min-height: 120px;
+    line-height: 1.7;
+}
+
+.hidden {
+    display: none;
+}
