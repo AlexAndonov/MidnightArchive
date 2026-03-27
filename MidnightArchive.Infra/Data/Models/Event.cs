@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
+using static MidnightArchive.Infra.Data.Constants.ValidationConstants;
 
 namespace MidnightArchive.Infra.Data.Models
 {
@@ -15,13 +16,13 @@ namespace MidnightArchive.Infra.Data.Models
 
 		[Comment("Event title")]
 		[Required]
-		[MaxLength(100)]
+		[MaxLength(EventTitleMaxLenth)]
 		public string Title { get; set; } = null!;
 
 
 		[Comment("Event description")]
 		[Required]
-		[MaxLength(1000)]
+		[MaxLength(EventDescriptionMaxLength)]
 		public string Description { get; set; } = null!;
 
 
