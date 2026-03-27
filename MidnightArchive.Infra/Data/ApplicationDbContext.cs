@@ -21,10 +21,29 @@ namespace MidnightArchive.Data
 				.WithMany(c => c.Stories)
 				.HasForeignKey(s => s.CategoryId)
 				.OnDelete(DeleteBehavior.Restrict);
+
+
+			builder.Entity<EventParticipant>()
+	.HasKey(ep => new { ep.EventId, ep.ParticipantId });
+
+			builder.Entity<EventParticipant>()
+				.HasOne(ep => ep.Event)
+				.WithMany(e => e.Participants)
+				.HasForeignKey(ep => ep.EventId)
+				.OnDelete(DeleteBehavior.Cascade);
+
+			builder.Entity<EventParticipant>()
+				.HasOne(ep => ep.Participant)
+				.WithMany(p => p.EventParticipants)
+				.HasForeignKey(ep => ep.ParticipantId)
+				.OnDelete(DeleteBehavior.Restrict);
 		}
 
 		public DbSet<Story> Stories { get; set; }
 		public DbSet<Comment> Comments { get; set; }
 		public DbSet<Category> Categories { get; set; }
+		public DbSet<Event> Events { get; set; }
+		public DbSet<EventParticipant> EventParticipants { get; set; }
+
 	}
 }
