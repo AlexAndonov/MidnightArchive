@@ -114,6 +114,22 @@ namespace MidnightArchive.Core.Services
                    .FirstOrDefaultAsync();
         }
 
+		public async Task<Guid?> GetRadnomStoryIdAsync()
+		{
+			List<Guid> storyIds = await context.Stories
+				.Where(s => !s.IsDeleted)
+				.Select(s => s.Id)
+				.ToListAsync();
+
+			if (storyIds == null)
+				return null;
+
+			Random random = new Random();
+			int randomIndex = random.Next(storyIds.Count);
+
+			return storyIds[randomIndex];
+		}
+
 		public async Task<IEnumerable<StorySummaryDto>> GetStoriesByCategoryAsync(int categoryId)
 		{
             var cacheKey = CacheKeys.StoriesByCategory(categoryId);

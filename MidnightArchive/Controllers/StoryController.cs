@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using MidnightArchive.Core.Contracts;
 using MidnightArchive.Core.DTOs.StoryDTOs;
+using MidnightArchive.Core.Services;
 using System.Security.Claims;
 
 namespace MidnightArchive.Controllers
@@ -59,6 +60,18 @@ namespace MidnightArchive.Controllers
 			}
 
 			return View(story);
+		}
+
+		[HttpGet]
+		[AllowAnonymous]
+		public async Task<IActionResult> Random()
+		{
+			Guid? storyId = await service.GetRadnomStoryIdAsync();
+
+			if (storyId == null)
+				return NotFound();
+
+			return RedirectToAction(nameof(Details), new { id = storyId.Value });
 		}
 
 
