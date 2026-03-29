@@ -14,3 +14,6 @@
 @import '../css/layout/stories/stories-form.css';
 @import '../css/layout/stories/stories-details.css';
 @import '../css/layout/comments/comments.css';
+@import '../css/layout/event/event-index.css';
+@import '../css/layout/event/event-details.css';
+@import '../css/layout/event/event-create.css';

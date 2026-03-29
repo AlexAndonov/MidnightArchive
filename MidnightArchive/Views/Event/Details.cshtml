@@ -1,0 +1,87 @@
+﻿@model MidnightArchive.Core.DTOs.EventDTOs.EventDetailsDto
+
+@{
+    ViewData["Title"] = "Event Details";
+}
+
+<section class="event-details-page">
+    <div class="container">
+        <article class="event-details-card">
+            <div class="event-details-header">
+                <div class="event-details-meta">
+                    <span class="event-details-date">
+                        @Model.StartDate.ToString("dd MMM yyyy HH:mm")
+                    </span>
+
+                    @if (!string.IsNullOrWhiteSpace(Model.Location))
+                    {
+                        <span class="event-details-location">@Model.Location</span>
+                    }
+                    else
+                    {
+                        <span class="event-details-location">Online</span>
+                    }
+                </div>
+
+                <h1 class="event-details-title">@Model.Title</h1>
+            </div>
+
+            <div class="event-details-body">
+                <div class="event-details-section">
+                    <h2 class="event-details-section-title">Description</h2>
+                    <p class="event-details-description">@Model.Description</p>
+                </div>
+
+                <div class="event-details-section">
+                    <h2 class="event-details-section-title">Event Information</h2>
+
+                    <div class="event-details-info-list">
+                        <div class="event-details-info-item">
+                            <span class="event-details-label">Starts:</span>
+                            <span class="event-details-value">@Model.StartDate.ToString("dd MMM yyyy HH:mm")</span>
+                        </div>
+
+                        <div class="event-details-info-item">
+                            <span class="event-details-label">Ends:</span>
+                            <span class="event-details-value">@Model.EndDate.ToString("dd MMM yyyy HH:mm")</span>
+                        </div>
+
+                        @if (!string.IsNullOrWhiteSpace(Model.Location))
+                        {
+                            <div class="event-details-info-item">
+                                <span class="event-details-label">Location:</span>
+                                <span class="event-details-value">@Model.Location</span>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="event-details-info-item">
+                                <span class="event-details-label">Location:</span>
+                                <span class="event-details-value">Online</span>
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(Model.Creator))
+                        {
+                            <div class="event-details-info-item">
+                                <span class="event-details-label">Created by:</span>
+                                <span class="event-details-value">@Model.Creator</span>
+                            </div>
+                        }
+
+                        <div class="event-details-info-item">
+                            <span class="event-details-label">Participants:</span>
+                            <span class="event-details-value">@Model.ParticipantsCounts</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="event-details-actions">
+                <a asp-action="Index" class="btn btn-outline">Back to Events</a>
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
+                <a asp-action="SoftDelete" asp-route-id="@Model.Id" class="btn btn-outline">Delete</a>
+            </div>
+        </article>
+    </div>
+</section>
