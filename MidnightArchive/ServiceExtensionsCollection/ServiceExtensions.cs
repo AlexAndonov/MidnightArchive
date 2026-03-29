@@ -17,6 +17,7 @@ namespace Microsoft.Extensions.DependencyInjection
 			services.AddScoped<ICategoryService, CategoryService>();
 			services.AddScoped<IStoryService, StoryService>();
 			services.AddScoped<ICommentService, CommentService>();
+			services.AddScoped<IEventService, EventService> ();
 			services.AddScoped<ICacheService, RedisCacheService>();
 
 
@@ -25,6 +26,7 @@ namespace Microsoft.Extensions.DependencyInjection
 				cfg.AddProfile<CategoryProfile>();
 				cfg.AddProfile<StoryProfile>();
 				cfg.AddProfile<CommentProfile>();
+				cfg.AddProfile<EventProfile>();
 			});
 
 			return services;
