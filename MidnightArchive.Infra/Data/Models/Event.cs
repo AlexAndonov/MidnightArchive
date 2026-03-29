@@ -48,6 +48,9 @@ namespace MidnightArchive.Infra.Data.Models
 		[Required]
 		public DateTime EndDate { get; set; }
 
+		[Comment("Indicated whether event is soft-deleted")]
+		public bool IsDeleted { get; set; }
+
 
 		[Comment("Participants in the event")]
 		public ICollection<EventParticipant> Participants { get; set; } = new List<EventParticipant>();
