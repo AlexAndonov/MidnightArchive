@@ -15,9 +15,9 @@
             <a asp-controller="Home" asp-action="Index" class="logo">NIGHT WHISPER</a>
             <ul>
                 <li><a asp-action="Index" asp-controller="Category" class="btn btn-ghost">Categories</a></li>
-                <li><a href="#" class="btn btn-ghost">Events</a></li>
+                <li><a asp-action="Index" asp-controller="Event" class="btn btn-ghost">Events</a></li>
                 <li><a href="#" class="btn btn-ghost">Top Rated</a></li>
-                <li><a href="#" class="btn btn-ghost">Random Story</a></li>
+                <li><a asp-action="Random" asp-controller="Story" class="btn btn-ghost">Random Story</a></li>
             </ul>
                 <div class="header-buttons">
                     <partial name="_LoginPartial" />
