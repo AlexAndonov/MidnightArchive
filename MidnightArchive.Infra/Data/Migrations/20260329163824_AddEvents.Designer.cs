@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MidnightArchive.Data;
 
@@ -11,9 +12,11 @@ using MidnightArchive.Data;
 namespace MidnightArchive.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260329163824_AddEvents")]
+    partial class AddEvents
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -382,51 +385,6 @@ namespace MidnightArchive.Data.Migrations
                         });
                 });
 
-            modelBuilder.Entity("MidnightArchive.Infra.Data.Models.Report", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasComment("Report identifier");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2")
-                        .HasComment("Time of creation of report");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)")
-                        .HasComment("Optional description for the report");
-
-                    b.Property<bool>("IsResolved")
-                        .HasColumnType("bit")
-                        .HasComment("Indicates whether report is resolved");
-
-                    b.Property<int>("Reason")
-                        .HasColumnType("int")
-                        .HasComment("Reason for the report");
-
-                    b.Property<string>("ReporterId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)")
-                        .HasComment("Reporter identifier");
-
-                    b.Property<Guid>("StoryId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasComment("Reported story identifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ReporterId");
-
-                    b.HasIndex("StoryId");
-
-                    b.ToTable("Reports", t =>
-                        {
-                            t.HasComment("Report class");
-                        });
-                });
-
             modelBuilder.Entity("MidnightArchive.Infra.Data.Models.Story", b =>
                 {
                     b.Property<Guid>("Id")
@@ -596,37 +554,18 @@ namespace MidnightArchive.Data.Migrations
                     b.HasOne("MidnightArchive.Infra.Data.Models.Event", "Event")
                         .WithMany("Participants")
                         .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("MidnightArchive.Infra.Data.Models.ApplicationUser", "Participant")
                         .WithMany("EventParticipants")
                         .HasForeignKey("ParticipantId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Event");
 
                     b.Navigation("Participant");
-                });
-
-            modelBuilder.Entity("MidnightArchive.Infra.Data.Models.Report", b =>
-                {
-                    b.HasOne("MidnightArchive.Infra.Data.Models.ApplicationUser", "Reporter")
-                        .WithMany()
-                        .HasForeignKey("ReporterId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MidnightArchive.Infra.Data.Models.Story", "Story")
-                        .WithMany()
-                        .HasForeignKey("StoryId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Reporter");
-
-                    b.Navigation("Story");
                 });
 
             modelBuilder.Entity("MidnightArchive.Infra.Data.Models.Story", b =>

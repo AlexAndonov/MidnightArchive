@@ -24,19 +24,25 @@ namespace MidnightArchive.Data
 
 
 			builder.Entity<EventParticipant>()
-	.HasKey(ep => new { ep.EventId, ep.ParticipantId });
+				.HasKey(ep => new { ep.EventId, ep.ParticipantId });
 
 			builder.Entity<EventParticipant>()
 				.HasOne(ep => ep.Event)
 				.WithMany(e => e.Participants)
 				.HasForeignKey(ep => ep.EventId)
-				.OnDelete(DeleteBehavior.Cascade);
+				.OnDelete(DeleteBehavior.NoAction);
 
 			builder.Entity<EventParticipant>()
 				.HasOne(ep => ep.Participant)
 				.WithMany(p => p.EventParticipants)
 				.HasForeignKey(ep => ep.ParticipantId)
-				.OnDelete(DeleteBehavior.Restrict);
+				.OnDelete(DeleteBehavior.NoAction);
+
+			builder.Entity<Report>()
+				.HasOne(r => r.Story)
+				.WithMany()
+				.HasForeignKey(r => r.StoryId)
+				.OnDelete(DeleteBehavior.NoAction);
 		}
 
 		public DbSet<Story> Stories { get; set; }
@@ -44,6 +50,7 @@ namespace MidnightArchive.Data
 		public DbSet<Category> Categories { get; set; }
 		public DbSet<Event> Events { get; set; }
 		public DbSet<EventParticipant> EventParticipants { get; set; }
+		public DbSet<Report> Reports { get; set; }
 
 	}
 }
