@@ -51,14 +51,35 @@ namespace MidnightArchive.Controllers
 				return BadRequest();
 			}
 
-			StoryDetailDto? story = await service.GetByIdAsync(id);
+			string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+			StoryDetailDto? story = await service.GetByIdAsync(id, userId);
 
 			if (story == null)
 			{
 				return NotFound();
 			}
 
-			await service.IncrementViewsAsync(id);
+			string cookieKey = GetStoryViewCookieKey(id);
+
+			bool alreadyViewed = Request.Cookies.ContainsKey(cookieKey);
+
+			if (!alreadyViewed)
+			{
+				await service.IncrementViewsAsync(id);
+				story.ViewsCount++;
+
+				CookieOptions options = new CookieOptions
+				{
+					HttpOnly = true,
+					Expires = DateTimeOffset.UtcNow.AddHours(24),
+					IsEssential = true,
+					SameSite = SameSiteMode.Lax,
+					Secure = Request.IsHttps
+				};
+
+				Response.Cookies.Append(cookieKey, "true", options);
+			}
 
 			return View(story);
 		}
@@ -214,6 +235,53 @@ namespace MidnightArchive.Controllers
 			}
 
 			return RedirectToAction(nameof(Index));
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Like(Guid id)
+		{
+			if (id == Guid.Empty)
+			{
+				return BadRequest();
+			}
+
+			string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+
+			bool result = await service.LikeAsync(id, userId);
+
+			if (!result)
+			{
+				return BadRequest();
+			}
+
+			return RedirectToAction(nameof(Details), new { id });
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Unlike(Guid id)
+		{
+			if (id == Guid.Empty)
+			{
+				return BadRequest();
+			}
+
+			string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+
+			bool result = await service.UnlikeAsync(id, userId);
+
+			if (!result)
+			{
+				return BadRequest();
+			}
+
+			return RedirectToAction(nameof(Details), new { id });
+		}
+
+		private string GetStoryViewCookieKey(Guid storyId)
+		{
+			return $"story_viewed_{storyId}";
 		}
 	}
 }
