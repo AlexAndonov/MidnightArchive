@@ -17,7 +17,9 @@ namespace Microsoft.Extensions.DependencyInjection
 			services.AddScoped<ICategoryService, CategoryService>();
 			services.AddScoped<IStoryService, StoryService>();
 			services.AddScoped<ICommentService, CommentService>();
-			services.AddScoped<IEventService, EventService> ();
+			services.AddScoped<IEventService, EventService>();
+			services.AddScoped<IHomeService, HomeService>();
+			services.AddScoped<IReportService, ReportService>();
 			services.AddScoped<ICacheService, RedisCacheService>();
 
 
@@ -38,6 +40,7 @@ namespace Microsoft.Extensions.DependencyInjection
 			{
 				ConfigureIdentity(options, configuration);
 			})
+				.AddRoles<IdentityRole>()
 				.AddEntityFrameworkStores<ApplicationDbContext>();
 
 			return services;
