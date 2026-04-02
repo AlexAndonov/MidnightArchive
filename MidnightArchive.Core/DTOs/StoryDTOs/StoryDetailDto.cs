@@ -30,6 +30,8 @@ namespace MidnightArchive.Core.DTOs.StoryDTOs
 
 		public bool IsAnonymous { get; set; }
 
+		public bool IsLikedByCurrentUser { get; set; }
+
 		public ICollection<CommentDto> Comments { get; set; } = new List<CommentDto>();
 	}
 }
