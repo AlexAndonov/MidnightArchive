@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using MidnightArchive.Core.Contracts;
 using MidnightArchive.Core.DTOs.StoryDTOs;
-using MidnightArchive.Core.Services;
 using System.Security.Claims;
 
 namespace MidnightArchive.Controllers
@@ -26,7 +25,7 @@ namespace MidnightArchive.Controllers
 		{
 			IEnumerable<StorySummaryDto> stories;
 
-			if (categoryId <= 0)
+			if (categoryId.HasValue && categoryId.Value <= 0)
 			{
 				return BadRequest();
 			}
@@ -52,12 +51,14 @@ namespace MidnightArchive.Controllers
 				return BadRequest();
 			}
 
-			var story = await service.GetByIdAsync(id);
+			StoryDetailDto? story = await service.GetByIdAsync(id);
 
 			if (story == null)
 			{
 				return NotFound();
 			}
+
+			await service.IncrementViewsAsync(id);
 
 			return View(story);
 		}
@@ -93,14 +94,9 @@ namespace MidnightArchive.Controllers
 				return View(model);
 			}
 
-			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
-			if (userId == null)
-			{
-				return Unauthorized();
-			}
-
-			var story = await service.AddAsync(model, userId);
+			StoryDetailDto story = await service.AddAsync(model, userId);
 
 			return RedirectToAction(nameof(Details), new { Id = story.Id });
 		}
@@ -113,11 +109,19 @@ namespace MidnightArchive.Controllers
 				return BadRequest();
 			}
 
-			var story = await service.GetByIdForEditAsync(id);
+			StoryFormDto? story = await service.GetByIdForEditAsync(id);
+			string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
 			if (story == null)
 			{
 				return NotFound();
+			}
+
+			bool isAuthor = await service.IsAuthorAsync(story.Id, userId);
+
+			if (!isAuthor)
+			{
+				return Forbid();
 			}
 
 			ViewBag.Categories = new SelectList(await categoryService.GetAllAsync(), "Id", "Title");
@@ -129,6 +133,14 @@ namespace MidnightArchive.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Edit(StoryFormDto model)
 		{
+			string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+			bool isAuthor = await service.IsAuthorAsync(model.Id, userId);
+
+			if (!isAuthor)
+			{
+				return Forbid();
+			}
+
 			if (ModelState.IsValid == false)
 			{
 				ViewBag.Categories = new SelectList(await categoryService.GetAllAsync(), "Id", "Title");
@@ -142,6 +154,7 @@ namespace MidnightArchive.Controllers
 				return NotFound();
 			}
 
+
 			return RedirectToAction(nameof(Details), new { Id = model.Id });
 		}
 
@@ -153,11 +166,20 @@ namespace MidnightArchive.Controllers
 				return BadRequest();
 			}
 
-			var story = await service.GetByIdForEditAsync(id);
+			StoryFormDto? story = await service.GetByIdForEditAsync(id);
+			string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
 			if (story == null)
 			{
 				return NotFound();
+			}
+			
+			bool isAuthor = await service.IsAuthorAsync(story.Id, userId);
+			bool isAdmin = User.IsInRole("Admin");
+
+			if (!isAuthor && !isAdmin)
+			{
+				return Forbid();
 			}
 
 			ViewBag.Categories = new SelectList(await categoryService.GetAllAsync(), "Id", "Title");
@@ -166,11 +188,22 @@ namespace MidnightArchive.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> DeleteConfirmed(Guid id)
 		{
 			if (id == Guid.Empty)
 			{
 				return BadRequest();
+			}
+
+			string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+			bool isAuthor = await service.IsAuthorAsync(id, userId);
+			bool isAdmin = User.IsInRole("Admin");
+
+
+			if (!isAuthor && !isAdmin)
+			{
+				return Forbid();
 			}
 
 			bool deleted = await service.SoftDeleteAsync(id);
