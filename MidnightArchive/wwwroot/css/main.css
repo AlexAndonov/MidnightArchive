@@ -5,8 +5,6 @@
 @import '../css/layout/homepage/homepage.css';
 @import '../css/layout/hero.css';
 @import '../css/layout/header.css';
-@import '../css/layout/homepage/top-stories.css';
-@import '../css/layout/homepage/featured-categories.css';
 @import '../css/layout/auth-pages.css';
 @import '../css/layout/categories/categories-index.css';
 @import '../css/layout/categories/categories-form.css';
@@ -17,3 +15,4 @@
 @import '../css/layout/event/event-index.css';
 @import '../css/layout/event/event-details.css';
 @import '../css/layout/event/event-create.css';
+@import '../css/layout/report/report.css';
