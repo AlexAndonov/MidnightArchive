@@ -15,6 +15,8 @@ namespace MidnightArchive.Core.DTOs.StoryDTOs
 		public DateTime CreatedOn { get; set; }
 
 		public DateTime? ModifiedOn { get; set; }
+		public StoryDetailDto() { }
+		public string AuthorId { get; set; } = null!;
 
 		public string AuthorName { get; set; } = null!;
 		
