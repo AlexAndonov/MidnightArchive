@@ -3,10 +3,24 @@
 
 @{
     ViewData["Title"] = Model.Title;
+    var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 }
 
 <section class="story-details-page">
     <div class="story-details-shell">
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success">
+                @TempData["SuccessMessage"]
+            </div>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger">
+                @TempData["ErrorMessage"]
+            </div>
+        }
 
         <article class="story-article">
             <header class="story-hero">
@@ -48,10 +62,24 @@
                     </div>
                 </div>
 
-                <div class="story-action-buttons">
-                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
-                    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline">Delete</a>
-                </div>
+                @{
+                    bool isAuthor = currentUserId == Model.AuthorId;
+                    bool isAdmin = User.IsInRole("Admin");
+                }
+
+                @if (isAuthor)
+                {
+                    <div class="story-action-buttons">
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline">Delete</a>
+                    </div>
+                }
+                else if (isAdmin)
+                {
+                    <div class="story-action-buttons">
+                        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline">Delete</a>
+                    </div>
+                }
             </header>
 
             <div class="story-content-wrap">
@@ -70,11 +98,19 @@
             </footer>
         </article>
 
-        <section class="story-comments-section">
-            @{
-                var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            }
+        @if (User.Identity?.IsAuthenticated == true && currentUserId != Model.AuthorId)
+        {
+            <div class="story-report-link">
+                <a asp-controller="Report"
+                       asp-action="Create"
+                       asp-route-storyId="@Model.Id"
+                       class="btn btn-outline">
+                    Report Story
+                </a>
+            </div>
+        }
 
+        <section class="story-comments-section">
             <div class="story-comments-header">
                 <h2>Comments</h2>
                 <p>What readers are saying about this story.</p>
