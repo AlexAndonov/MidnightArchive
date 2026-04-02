@@ -233,3 +233,13 @@
     min-width: 120px;
     justify-content: center;
 }
+
+.story-footer-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.inline-form {
+    display: inline;
+}

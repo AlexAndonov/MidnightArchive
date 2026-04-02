@@ -89,12 +89,32 @@
             </div>
 
             <footer class="story-footer-actions">
+
                 <a asp-action="Details"
                        asp-controller="Category"
                        asp-route-id="@Model.CategoryId"
                        class="btn btn-primary">
                     ← Back to Stories
                 </a>
+
+                @if (User.Identity?.IsAuthenticated == true && currentUserId != Model.AuthorId)
+                {
+                    @if (Model.IsLikedByCurrentUser)
+                    {
+                        <form asp-action="Unlike" asp-route-id="@Model.Id" method="post" class="inline-form">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-outline">Unlike</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <form asp-action="Like" asp-route-id="@Model.Id" method="post" class="inline-form">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-primary">Like</button>
+                        </form>
+                    }
+                }
+
             </footer>
         </article>
 
