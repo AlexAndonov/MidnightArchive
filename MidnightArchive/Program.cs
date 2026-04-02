@@ -1,12 +1,14 @@
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MidnightArchive.Data;
+using MidnightArchive.Seed;
 
 namespace MidnightArchive
 {
 	public class Program
 	{
-		public static void Main(string[] args)
+		public static async Task Main(string[] args)
 		{
 			var builder = WebApplication.CreateBuilder(args);
 
@@ -22,9 +24,15 @@ namespace MidnightArchive
 			{
 				options.Configuration = builder.Configuration["Redis:ConnectionString"];
 				options.InstanceName = "MidnightArchive:";
-            });
+			});
 
-            var app = builder.Build();
+			var app = builder.Build();
+
+			using (var scope = app.Services.CreateScope())
+			{
+				var services = scope.ServiceProvider;
+				await RoleSeeder.SeedAsync(services);
+			}
 
 			if (app.Environment.IsDevelopment())
 			{
