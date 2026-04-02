@@ -64,5 +64,8 @@ namespace MidnightArchive.Infra.Data.Models
 
 		[Comment("Story's comments")]
 		public ICollection<Comment> Comments { get; set; } = new List<Comment>();
+
+		[Comment("Story likes")]
+		public ICollection<StoryLike> Likes { get; set; } = new List<StoryLike>();
 	}
 }
