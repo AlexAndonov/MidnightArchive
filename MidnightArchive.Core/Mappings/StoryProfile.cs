@@ -15,6 +15,11 @@ namespace MidnightArchive.Core.Mappings
 				.ForMember(
 					dest => dest.CategoryName,
 					opt => opt.MapFrom(src => src.Category != null ? src.Category.Title : string.Empty)
+				)
+				.ForMember
+				(
+					dest => dest.AuthorName,
+					opt => opt.MapFrom(src => src.IsAnonymous ? null : src.Author.UserName)
 				);
 
 			CreateMap<Story, StoryFormDto>();
@@ -22,7 +27,13 @@ namespace MidnightArchive.Core.Mappings
 						.ForMember(
 							dest => dest.AuthorName,
 							opt => opt.MapFrom(src => src.IsAnonymous ? null : src.Author.UserName)
-						);
+						)
+						 .ForMember(
+							dest => dest.Preview,
+							opt => opt.MapFrom(src =>
+								src.Content.Length > 120
+									? src.Content.Substring(0, 120) + "..."
+									: src.Content));
 		}
 	}
 }
