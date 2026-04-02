@@ -1,0 +1,51 @@
+﻿@model MidnightArchive.Core.DTOs.ReportDTOs.ReportCreateDto
+
+@{
+    ViewData["Title"] = "Report Story";
+}
+
+<section class="report-page">
+    <div class="report-page-shell">
+        <h1>Report Story</h1>
+        <p>If this story violates the platform rules, submit a report for admin review.</p>
+
+        <form asp-action="Create" method="post" class="report-form">
+            <input type="hidden" asp-for="StoryId" />
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="Reason" class="form-label"></label>
+                <select asp-for="Reason" class="form-input">
+                    <option value="">Select a reason</option>
+                    <option value="1">Spam</option>
+                    <option value="2">Offensive Content</option>
+                    <option value="3">Harassment</option>
+                    <option value="4">False Information</option>
+                    <option value="5">Other</option>
+                </select>
+                <span asp-validation-for="Reason" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Description" class="form-label"></label>
+                <textarea asp-for="Description"
+                          class="form-input form-textarea"
+                          rows="5"
+                          placeholder="Add more details if needed..."></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="story-action-buttons">
+                <button type="submit" class="btn btn-primary">Submit Report</button>
+                <a asp-controller="Story" asp-action="Details" asp-route-id="@Model.StoryId" class="btn btn-outline">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

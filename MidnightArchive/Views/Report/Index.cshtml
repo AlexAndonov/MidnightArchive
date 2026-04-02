@@ -1,0 +1,110 @@
+﻿@model IEnumerable<MidnightArchive.Core.DTOs.ReportDTOs.ReportListDto>
+
+@{
+    ViewData["Title"] = "Reported Stories";
+}
+
+<section class="reports-page">
+    <div class="reports-page-shell">
+        <div class="reports-page-header">
+            <h1>Reported Stories</h1>
+            <p>Review submitted reports and resolve them when necessary.</p>
+        </div>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success">
+                @TempData["SuccessMessage"]
+            </div>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger">
+                @TempData["ErrorMessage"]
+            </div>
+        }
+
+        @if (Model != null && Model.Any())
+        {
+            <div class="reports-table-wrapper">
+                <table class="reports-table">
+                    <thead>
+                        <tr>
+                            <th>Story</th>
+                            <th>Reporter</th>
+                            <th>Reason</th>
+                            <th>Description</th>
+                            <th>Created On</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var report in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <a asp-controller="Story"
+                                           asp-action="Details"
+                                           asp-route-id="@report.StoryId"
+                                           class="report-story-link">
+                                        @report.StoryTitle
+                                    </a>
+                                </td>
+                                <td>@report.ReporterName</td>
+                                <td>@report.Reason</td>
+                                <td>
+                                    @if (!string.IsNullOrWhiteSpace(report.Description))
+                                    {
+                                        @report.Description
+                                    }
+                                    else
+                                    {
+                                        <span class="report-empty-text">No additional details</span>
+                                    }
+                                </td>
+                                <td>@report.CreatedOn.ToString("dd MMM yyyy HH:mm")</td>
+                                <td>
+                                    @if (report.IsResolved)
+                                    {
+                                        <span class="report-status resolved">Resolved</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="report-status pending">Pending</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="report-actions">
+                                        @if (!report.IsResolved)
+                                        {
+                                            <form asp-controller="Report" asp-action="Resolve" method="post">
+                                                <input type="hidden" name="id" value="@report.Id" />
+                                                <button type="submit" class="btn btn-primary">Resolve</button>
+                                            </form>
+                                        }
+
+                                        <a asp-controller="Story"
+                                               asp-action="Details"
+                                               asp-route-id="@report.StoryId"
+                                               class="btn btn-outline">
+                                            View Story
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="reports-empty-state">
+                <h3>No reports found</h3>
+                <p>There are currently no submitted reports.</p>
+            </div>
+        }
+    </div>
+</section>
