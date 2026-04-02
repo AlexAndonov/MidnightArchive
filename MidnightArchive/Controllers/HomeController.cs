@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using MidnightArchive.Core.Contracts;
+using MidnightArchive.Core.DTOs.Home;
 using MidnightArchive.Models;
 using System.Diagnostics;
 
@@ -6,14 +8,18 @@ namespace MidnightArchive.Controllers
 {
 	public class HomeController : Controller
 	{
-		public IActionResult Index()
+		private readonly IHomeService service;
+
+		public HomeController(IHomeService _service)
 		{
-			return View();
+			service = _service;
 		}
 
-		public IActionResult Privacy()
+		[HttpGet]
+		public async Task<IActionResult> Index()
 		{
-			return View();
+			HomeIndexDto model = await service.GetHomePageDataAsync();
+			return View(model);
 		}
 
 		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
