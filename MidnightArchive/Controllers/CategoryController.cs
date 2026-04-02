@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MidnightArchive.Core.Contracts;
 using MidnightArchive.Core.DTOs.CategoryDTOs;
 
 namespace MidnightArchive.Controllers
 {
-	//[Authorize(Roles = "Admin")]
+	[Authorize(Roles = "Admin")]
 	public class CategoryController : Controller
 	{
 		private readonly ICategoryService service;
@@ -15,6 +16,7 @@ namespace MidnightArchive.Controllers
 		}
 
 		[HttpGet]
+		[AllowAnonymous]
 		public async Task<IActionResult> Index()
 		{
 			IEnumerable<CategoryListDto> categories = await service.GetAllAsync();
@@ -23,6 +25,7 @@ namespace MidnightArchive.Controllers
 		}
 
 		[HttpGet]
+		[AllowAnonymous]
 		public async Task<IActionResult> Details(int Id, int page = 1, int pageSize = 10)
 		{
 			if (Id <= 0)
