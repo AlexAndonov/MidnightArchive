@@ -20,7 +20,7 @@ namespace MidnightArchive.Core.Services
 			context = _context;
 			mapper = _mapper;
 			cacheService = _cacheService;
-        }
+		}
 
 		public async Task<StoryDetailDto> AddAsync(StoryCreateDto model, string userId)
 		{
@@ -46,10 +46,10 @@ namespace MidnightArchive.Core.Services
 			await context.AddAsync(story);
 			await context.SaveChangesAsync();
 
-            await cacheService.RemoveAsync(CacheKeys.StoriesAll);
-            await cacheService.RemoveAsync(CacheKeys.StoriesByCategory(story.CategoryId));
+			await cacheService.RemoveAsync(CacheKeys.StoriesAll);
+			await cacheService.RemoveAsync(CacheKeys.StoriesByCategory(story.CategoryId));
 
-            return mapper.Map<StoryDetailDto>(story);
+			return mapper.Map<StoryDetailDto>(story);
 		}
 
 		public async Task<bool> EditAsync(StoryFormDto model)
@@ -68,10 +68,10 @@ namespace MidnightArchive.Core.Services
 
 			await context.SaveChangesAsync();
 
-            await cacheService.RemoveAsync(CacheKeys.StoriesAll);
-            await cacheService.RemoveAsync(CacheKeys.StoriesByCategory(story.CategoryId));
+			await cacheService.RemoveAsync(CacheKeys.StoriesAll);
+			await cacheService.RemoveAsync(CacheKeys.StoriesByCategory(story.CategoryId));
 
-            return true;
+			return true;
 		}
 
 		public async Task<IEnumerable<StorySummaryDto>> GetAllAsync()
@@ -85,9 +85,9 @@ namespace MidnightArchive.Core.Services
 				return cachedStories;
 			}
 
-            List<StorySummaryDto> stories = await context.Stories
+			List<StorySummaryDto> stories = await context.Stories
 					.AsNoTracking()
-                    .Where(s => !s.IsDeleted)
+					.Where(s => !s.IsDeleted)
 					.ProjectTo<StorySummaryDto>(mapper.ConfigurationProvider)
 					.ToListAsync();
 
@@ -96,23 +96,36 @@ namespace MidnightArchive.Core.Services
 			return stories;
 		}
 
-		public async Task<StoryDetailDto?> GetByIdAsync(Guid id)
+		public async Task<StoryDetailDto?> GetByIdAsync(Guid id, string? userId)
 		{
-            return await context.Stories
+			StoryDetailDto? story =  await context.Stories
 					.AsNoTracking()
 					.Where(s => s.Id == id && !s.IsDeleted)
 					.ProjectTo<StoryDetailDto>(mapper.ConfigurationProvider)
 					.FirstOrDefaultAsync();
-        }
+
+			if (story == null)
+			{
+				return null;
+			}
+
+			if (!string.IsNullOrEmpty(userId))
+			{
+				story.IsLikedByCurrentUser = await context.StoryLikes
+					.AnyAsync(sl => sl.StoryId == id && sl.UserId == userId);
+			}
+
+			return story;
+		}
 
 		public async Task<StoryFormDto?> GetByIdForEditAsync(Guid id)
 		{
-            return await context.Stories
-                   .AsNoTracking()
-                   .Where(s => s.Id == id && !s.IsDeleted)
-                   .ProjectTo<StoryFormDto>(mapper.ConfigurationProvider)
-                   .FirstOrDefaultAsync();
-        }
+			return await context.Stories
+				   .AsNoTracking()
+				   .Where(s => s.Id == id && !s.IsDeleted)
+				   .ProjectTo<StoryFormDto>(mapper.ConfigurationProvider)
+				   .FirstOrDefaultAsync();
+		}
 
 		public async Task<Guid?> GetRadnomStoryIdAsync()
 		{
@@ -132,26 +145,26 @@ namespace MidnightArchive.Core.Services
 
 		public async Task<IEnumerable<StorySummaryDto>> GetStoriesByCategoryAsync(int categoryId)
 		{
-            var cacheKey = CacheKeys.StoriesByCategory(categoryId);
+			var cacheKey = CacheKeys.StoriesByCategory(categoryId);
 
-            var cachedStories = await cacheService.GetAsync<IEnumerable<StorySummaryDto>>(cacheKey);
+			var cachedStories = await cacheService.GetAsync<IEnumerable<StorySummaryDto>>(cacheKey);
 
-            if (cachedStories != null)
-            {
-                return cachedStories;
-            }
+			if (cachedStories != null)
+			{
+				return cachedStories;
+			}
 
-            var stories = await context.Stories
+			var stories = await context.Stories
 				.Where(s => !s.IsDeleted && s.CategoryId == categoryId)
 				.Include(s => s.Author)
 				.AsNoTracking()
 				.ProjectTo<StorySummaryDto>(mapper.ConfigurationProvider)
 				.ToListAsync();
 
-            await cacheService.SetAsync(cacheKey, stories, TimeSpan.FromMinutes(10));
+			await cacheService.SetAsync(cacheKey, stories, TimeSpan.FromMinutes(10));
 
 			return stories;
-        }
+		}
 
 		public async Task<bool> HardDeleteAsync(Guid id)
 		{
@@ -166,9 +179,15 @@ namespace MidnightArchive.Core.Services
 			await context.SaveChangesAsync();
 
 			await cacheService.RemoveAsync(CacheKeys.StoriesAll);
-            await cacheService.RemoveAsync(CacheKeys.StoriesByCategory(story.CategoryId));
+			await cacheService.RemoveAsync(CacheKeys.StoriesByCategory(story.CategoryId));
 
-            return true;
+			return true;
+		}
+
+		public async Task<bool> HasUserLikedAsync(Guid storyId, string userId)
+		{
+			return await context.StoryLikes
+				.AnyAsync(sl => sl.StoryId == storyId && sl.UserId == userId);
 		}
 
 		public async Task<bool> IncrementViewsAsync(Guid storyId)
@@ -192,6 +211,38 @@ namespace MidnightArchive.Core.Services
 				.AnyAsync(s => s.Id == storyId && s.AuthorId == userId && !s.IsDeleted);
 		}
 
+		public async Task<bool> LikeAsync(Guid storyId, string userId)
+		{
+			Story? story = await context.Stories
+				.FirstOrDefaultAsync(s => s.Id == storyId && !s.IsDeleted);
+
+			if (story == null)
+			{
+				return false;
+			}
+
+			bool alreadyLiked = await context.StoryLikes
+				.AnyAsync(sl => sl.StoryId == storyId && sl.UserId == userId);
+
+			if (alreadyLiked)
+			{
+				return false;
+			}
+
+			StoryLike storyLike = new StoryLike
+			{
+				StoryId = storyId,
+				UserId = userId
+			};
+
+			await context.StoryLikes.AddAsync(storyLike);
+			story.LikesCount++;
+
+			await context.SaveChangesAsync();
+
+			return true;
+		}
+
 		public async Task<bool> SoftDeleteAsync(Guid id)
 		{
 			var story = await context.Stories.FirstOrDefaultAsync(s => s.Id == id && !s.IsDeleted);
@@ -204,10 +255,40 @@ namespace MidnightArchive.Core.Services
 			story.IsDeleted = true;
 			await context.SaveChangesAsync();
 
-            await cacheService.RemoveAsync(CacheKeys.StoriesAll);
-            await cacheService.RemoveAsync(CacheKeys.StoriesByCategory(story.CategoryId));
+			await cacheService.RemoveAsync(CacheKeys.StoriesAll);
+			await cacheService.RemoveAsync(CacheKeys.StoriesByCategory(story.CategoryId));
 
-            return true;
+			return true;
+		}
+
+		public async Task<bool> UnlikeAsync(Guid storyId, string userId)
+		{
+			StoryLike? storyLike = await context.StoryLikes
+						.FirstOrDefaultAsync(sl => sl.StoryId == storyId && sl.UserId == userId);
+
+			if (storyLike == null)
+			{
+				return false;
+			}
+
+			Story? story = await context.Stories
+						.FirstOrDefaultAsync(s => s.Id == storyId && !s.IsDeleted);
+
+			if (story == null)
+			{
+				return false;
+			}
+
+			context.StoryLikes.Remove(storyLike);
+
+			if (story.LikesCount > 0)
+			{
+				story.LikesCount--;
+			}
+
+			await context.SaveChangesAsync();
+
+			return true;
 		}
 	}
 }

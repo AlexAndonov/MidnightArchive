@@ -5,7 +5,7 @@ namespace MidnightArchive.Core.Contracts
 {
 	public interface IStoryService
 	{
-		Task<StoryDetailDto?> GetByIdAsync(Guid id);
+		Task<StoryDetailDto?> GetByIdAsync(Guid id, string? userId);
 		Task<StoryFormDto?> GetByIdForEditAsync(Guid id);
 		Task<Guid?> GetRadnomStoryIdAsync();
 		Task<IEnumerable<StorySummaryDto>> GetAllAsync();
@@ -16,5 +16,8 @@ namespace MidnightArchive.Core.Contracts
 		Task<bool> HardDeleteAsync(Guid id);
 		Task<bool> IsAuthorAsync(Guid storyId, string userId);
 		Task<bool> IncrementViewsAsync(Guid storyId);
+		Task<bool> LikeAsync(Guid storyId, string userId);
+		Task<bool> UnlikeAsync(Guid storyId, string userId);
+		Task<bool> HasUserLikedAsync(Guid storyId, string userId);
 	}
 }
