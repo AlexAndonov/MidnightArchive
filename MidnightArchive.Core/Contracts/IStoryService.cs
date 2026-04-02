@@ -14,5 +14,7 @@ namespace MidnightArchive.Core.Contracts
 		Task<bool> EditAsync(StoryFormDto model);
 		Task<bool> SoftDeleteAsync(Guid id);
 		Task<bool> HardDeleteAsync(Guid id);
+		Task<bool> IsAuthorAsync(Guid storyId, string userId);
+		Task<bool> IncrementViewsAsync(Guid storyId);
 	}
 }

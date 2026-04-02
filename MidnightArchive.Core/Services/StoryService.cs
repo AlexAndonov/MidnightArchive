@@ -171,6 +171,27 @@ namespace MidnightArchive.Core.Services
             return true;
 		}
 
+		public async Task<bool> IncrementViewsAsync(Guid storyId)
+		{
+			Story? story = await context.Stories
+			 .FirstOrDefaultAsync(s => s.Id == storyId && !s.IsDeleted);
+
+			if (story == null)
+			{
+				return false;
+			}
+
+			story.ViewsCount++;
+			await context.SaveChangesAsync();
+			return true;
+		}
+
+		public async Task<bool> IsAuthorAsync(Guid storyId, string userId)
+		{
+			return await context.Stories
+				.AnyAsync(s => s.Id == storyId && s.AuthorId == userId && !s.IsDeleted);
+		}
+
 		public async Task<bool> SoftDeleteAsync(Guid id)
 		{
 			var story = await context.Stories.FirstOrDefaultAsync(s => s.Id == id && !s.IsDeleted);
