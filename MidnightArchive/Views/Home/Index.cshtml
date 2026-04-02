@@ -1,152 +1,185 @@
-﻿<section class="hero">
+﻿@model MidnightArchive.Core.DTOs.Home.HomeIndexDto
+
+@{
+    ViewData["Title"] = "Home";
+}
+
+<section class="hero">
     <div class="hero-text">
         <h1>TRUE SCARY STORIES BASED ON REAL EXPERIENCES</h1>
         <h4 class="hero-subtitle">
             Real-life horror encounters, paranormal experiences and the darkest
             stories shared by people around the world.
         </h4>
-        <a asp-controller="Story" asp-action="Create"  class="btn btn-primary">Write Your Story</a>
+
+        <div class="hero-actions">
+            <a asp-controller="Story" asp-action="Create" class="btn btn-primary">Write Your Story</a>
+            <a asp-controller="Story" asp-action="Random" class="btn btn-outline">Read a Random Story</a>
+        </div>
     </div>
-    <div class="hero-image"></div>
 </section>
 
 <section class="top-stories">
     <h2 class="section-title">Top Stories of the Month</h2>
     <div class="story-grid">
-        <article class="story-card">
-            <h3>The Haunting of Elm Street</h3>
-            <p class="story-excerpt">Strange sounds at midnight… the doors locked themselves.</p>
-            <div class="story-meta-wrapper">
-                <div class="story-meta">
-                    <span>👁 23.4k</span>
-                    <span>⭐ 4.9</span>
-                </div>
-                <button class="btn btn-outline">Read</button>
-            </div>
-        </article>
-        <article class="story-card">
-            <h3>Whisper in the Woods</h3>
-            <p class="story-excerpt">Footsteps behind me… but I was alone.</p>
-            <div class="story-meta-wrapper">
-                <div class="story-meta">
-                    <span>👁 18.7k</span>
-                    <span>⭐ 4.8</span>
-                </div>
-                <button class="btn btn-outline">Read</button>
-            </div>
-        </article>
-        <article class="story-card">
-            <h3>The Forgotten Room</h3>
-            <p class="story-excerpt">A door in my house I never knew existed…</p>
-            <div class="story-meta-wrapper">
-                <div class="story-meta">
-                    <span>👁 17.5k</span>
-                    <span>⭐ 4.7</span>
-                </div>
-                <button class="btn btn-outline">Read</button>
-            </div>
-        </article>
-        <article class="story-card">
-            <h3>Midnight Caller</h3>
-            <p class="story-excerpt">The phone rang at 3:17 AM. No one was supposed to call me…</p>
-            <div class="story-meta-wrapper">
-                <div class="story-meta">
-                    <span>👁 16.2k</span>
-                    <span>⭐ 4.6</span>
-                </div>
-                <button class="btn btn-outline">Read</button>
-            </div>
-        </article>
-        <article class="story-card">
-            <h3>Shadow on the Wall</h3>
-            <p class="story-excerpt">It moved on its own… I couldn’t believe my eyes.</p>
-            <div class="story-meta-wrapper">
-                <div class="story-meta">
-                    <span>👁 15.8k</span>
-                    <span>⭐ 4.6</span>
-                </div>
-                <button class="btn btn-outline">Read</button>
-            </div>
-        </article>
-        <article class="story-card">
-            <h3>The Silent House</h3>
-            <p class="story-excerpt">No lights, no sounds… just emptiness and dread.</p>
-            <div class="story-meta-wrapper">
-                <div class="story-meta">
-                    <span>👁 14.9k</span>
-                    <span>⭐ 4.5</span>
-                </div>
-                <button class="btn btn-outline">Read</button>
-            </div>
-        </article>
-        <article class="story-card">
-            <h3>Voices in the Attic</h3>
-            <p class="story-excerpt">They whispered my name… and I wasn’t alone.</p>
-            <div class="story-meta-wrapper">
-                <div class="story-meta">
-                    <span>👁 13.7k</span>
-                    <span>⭐ 4.5</span>
-                </div>
-                <button class="btn btn-outline">Read</button>
-            </div>
-        </article>
-        <article class="story-card">
-            <h3>The Vanishing Light</h3>
-            <p class="story-excerpt">Streetlights went out… and I saw it standing there.</p>
-            <div class="story-meta-wrapper">
-                <div class="story-meta">
-                    <span>👁 12.9k</span>
-                    <span>⭐ 4.4</span>
-                </div>
-                <button class="btn btn-outline">Read</button>
-            </div>
-        </article>
-        <article class="story-card">
-            <h3>Under the Bed</h3>
-            <p class="story-excerpt">I heard breathing… but no one was there.</p>
-            <div class="story-meta-wrapper">
-                <div class="story-meta">
-                    <span>👁 12.3k</span>
-                    <span>⭐ 4.4</span>
-                </div>
-                <button class="btn btn-outline">Read</button>
-            </div>
-        </article>
-        <article class="story-card">
-            <h3>Mirror Reflection</h3>
-            <p class="story-excerpt">My reflection moved… but I didn’t.</p>
-            <div class="story-meta-wrapper">
-                <div class="story-meta">
-                    <span>👁 11.8k</span>
-                    <span>⭐ 4.3</span>
-                </div>
-                <button class="btn btn-outline">Read</button>
-            </div>
-        </article>
+        @if (Model.TopStoriesOfMonth != null && Model.TopStoriesOfMonth.Any())
+        {
+            @foreach (var story in Model.TopStoriesOfMonth)
+            {
+                <article class="story-card">
+                    <h3>@story.Title</h3>
+                    <p class="story-excerpt">@story.Preview</p>
+                    <div class="story-meta-wrapper">
+                        <div class="story-meta">
+                            <span>👁 @story.ViewsCount</span>
+                            <span>❤ @story.LikesCount</span>
+                        </div>
+                        <a asp-controller="Story" asp-action="Details" asp-route-id="@story.Id" class="btn btn-outline">
+                            Read
+                        </a>
+                    </div>
+                </article>
+            }
+        }
+        else
+        {
+            <p class="empty-section-text">No top stories available right now.</p>
+        }
     </div>
 </section>
 
+<section class="random-story-section">
+    <div class="random-story-content">
+        <h2 class="section-title">Don’t Know What to Read?</h2>
+        <p class="random-story-text">
+            Let the archive choose for you. Discover a chilling story at random
+            and dive straight into the unknown.
+        </p>
+        <a asp-controller="Story" asp-action="Random" class="btn btn-primary">Read a Random Story</a>
+    </div>
+</section>
+
+<section class="latest-stories">
+    <h2 class="section-title">Latest Stories</h2>
+    <div class="story-grid">
+        @if (Model.LatestStories != null && Model.LatestStories.Any())
+        {
+            @foreach (var story in Model.LatestStories)
+            {
+                <article class="story-card">
+                    <h3>@story.Title</h3>
+                    <p class="story-excerpt">@story.Preview</p>
+                    <div class="story-meta-wrapper">
+                        <div class="story-meta">
+                            <span>👁 @story.ViewsCount</span>
+                            <span>❤ @story.LikesCount</span>
+                        </div>
+                        <a asp-controller="Story" asp-action="Details" asp-route-id="@story.Id" class="btn btn-outline">
+                            Read
+                        </a>
+                    </div>
+                </article>
+            }
+        }
+        else
+        {
+            <p class="empty-section-text">No latest stories available right now.</p>
+        }
+    </div>
+</section>
 
 <section class="featured-categories">
     <h2 class="section-title">Featured Categories</h2>
     <div class="categories-grid">
-        <article class="category-card">
-            <h3>Horror Stories</h3>
-            <p>Explore the scariest tales from around the world.</p>
-            <span>👁 2.9k</span>
-            <a class="btn btn-outline">Explore Stories</a>
-        </article>
-        <article class="category-card">
-            <h3>Paranormal Encounters</h3>
-            <p>Real stories of ghostly encounters and unexplained phenomena.</p>
-            <span>👁 2.9k</span>
-            <a class="btn btn-outline">Explore Stories</a>
-        </article>
-        <article class="category-card">
-            <h3>Urban Legends</h3>
-            <p>Legends that chill to the bone and have been told for generations.</p>
-            <span>👁 2.9k</span>
-            <a class="btn btn-outline">Explore Stories</a>
-        </article>
+        @if (Model.FeaturedCategories != null && Model.FeaturedCategories.Any())
+        {
+            @foreach (var category in Model.FeaturedCategories)
+            {
+                <article class="category-card">
+                    <h3>@category.Title</h3>
+                    <p>@category.Description</p>
+                    <span>@category.StoriesCount stories</span>
+                    <a asp-controller="Category" asp-action="Details" asp-route-id="@category.Id" class="btn btn-outline">
+                        Explore Stories
+                    </a>
+                </article>
+            }
+        }
+        else
+        {
+            <p class="empty-section-text">No featured categories available right now.</p>
+        }
     </div>
 </section>
+
+@if (Model.FeaturedEvents != null && Model.FeaturedEvents.Any())
+{
+    <section class="featured-events">
+        <h2 class="section-title">Featured Events</h2>
+        <div class="categories-grid">
+            @foreach (var ev in Model.FeaturedEvents)
+            {
+                <article class="category-card">
+                    <h3>@ev.Title</h3>
+                    <span>@ev.StartDate.ToString("dd MMM yyyy")</span>
+                    <a asp-controller="Event" asp-action="Details" asp-route-id="@ev.Id" class="btn btn-outline">
+                        View Event
+                    </a>
+                </article>
+            }
+        </div>
+    </section>
+}
+
+<section class="write-story-section">
+    <div class="write-story-content">
+        <h2 class="section-title">Have a Story That Still Haunts You?</h2>
+        <p class="write-story-text">
+            Share your real experience with the MidnightArchive community.
+            Your story might become the next unforgettable read.
+        </p>
+        <a asp-controller="Story" asp-action="Create" class="btn btn-primary">Write Your Story</a>
+    </div>
+</section>
+
+<footer class="site-footer">
+    <div class="footer-grid">
+        <div class="footer-brand">
+            <h3>MidnightArchive</h3>
+            <p>
+                A home for real scary stories, paranormal encounters,
+                and unsettling experiences shared by people around the world.
+            </p>
+        </div>
+
+        <div class="footer-links">
+            <h4>Explore</h4>
+            <ul>
+                <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+                <li><a asp-controller="Story" asp-action="Random">Random Story</a></li>
+                <li><a asp-controller="Category" asp-action="Index">Categories</a></li>
+                <li><a asp-controller="Event" asp-action="Index">Events</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-links">
+            <h4>Contribute</h4>
+            <ul>
+                <li><a asp-controller="Story" asp-action="Create">Write Your Story</a></li>
+                <li><a asp-controller="Event" asp-action="Create">Create Event</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-links">
+            <h4>Account</h4>
+            <ul>
+                <li><a asp-area="Identity" asp-page="/Account/Login">Login</a></li>
+                <li><a asp-area="Identity" asp-page="/Account/Register">Register</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <p>&copy; @DateTime.UtcNow.Year MidnightArchive. All rights reserved.</p>
+    </div>
+</footer>
