@@ -2,7 +2,7 @@
 @import '../css/base/typography.css';
 @import '../css/base/variables.css';
 @import '../css/components/buttons.css';
-@import '../css/layout/homepage.css';
+@import '../css/layout/homepage/homepage.css';
 @import '../css/layout/hero.css';
 @import '../css/layout/header.css';
 @import '../css/layout/homepage/top-stories.css';
