@@ -8,7 +8,10 @@
     <div class="categories-header">
         <h1>Explore Categories</h1>
         <p>Find your next nightmare</p>
-         <a asp-controller="Category" asp-action="Create" class="btn btn-primary">Create Category</a>
+        @if (User.IsInRole("Admin"))
+        {
+            <a asp-controller="Category" asp-action="Create" class="btn btn-primary">Create Category</a>
+        }
     </div>
     @if (Model == null || !Model.Any())
     {
