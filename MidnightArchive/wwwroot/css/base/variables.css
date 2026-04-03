@@ -3,13 +3,16 @@
     --bg-secondary: #12141b;
     --bg-elevated: #181b24;
 
-    --text-primary: #c8c8c8;
-    --text-secondary: #a1a1b3;
+    --text-primary: #e2e2e6;
+    --text-secondary: #b7b7c6;
     --text-third: #0b0d12;
 
     --accent-primary: #8b1e2d;
+    --accent-primary-hover: #a32536;
+    --accent-soft: rgba(139, 30, 45, 0.18);
 
     --border-color: #232634;
+    --border-soft: rgba(255, 255, 255, 0.06);
     --shadow-soft: 0 10px 40px rgba(0, 0, 0, 0.6);
 
     --radius-sm: 6px;
