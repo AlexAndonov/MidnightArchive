@@ -40,6 +40,7 @@
                 <textarea asp-for="Content"
                           class="form-input form-textarea"
                           placeholder="Write your full story here..."></textarea>
+                <span>Characters: <span id="charCounter">0</span></span>
                 <span asp-validation-for="Content" class="form-error"></span>
             </div>
 
@@ -61,4 +62,17 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <script>
+         document.addEventListener("DOMContentLoaded", () => {
+             const charCounter = document.getElementById("charCounter");
+             const input = document.querySelector(".form-input.form-textarea");
+
+             input.addEventListener("input", () => {
+                 const currentLength = input.value.length;
+                 
+                 charCounter.textContent = currentLength;
+             })
+        });
+    </script>
 }
