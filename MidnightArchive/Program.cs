@@ -20,11 +20,7 @@ namespace MidnightArchive
 			builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 			builder.Services.AddControllersWithViews();
 
-			builder.Services.AddStackExchangeRedisCache(options =>
-			{
-				options.Configuration = builder.Configuration["Redis:ConnectionString"];
-				options.InstanceName = "MidnightArchive:";
-			});
+			builder.Services.AddDistributedMemoryCache();
 
 			var app = builder.Build();
 

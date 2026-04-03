@@ -7,11 +7,11 @@ using System.Text.Json;
 
 namespace MidnightArchive.Core.Services
 {
-    public class RedisCacheService : ICacheService
+    public class CacheService : ICacheService
     {
         private readonly IDistributedCache cache;
 
-        public RedisCacheService(IDistributedCache _cache)
+        public CacheService(IDistributedCache _cache)
         {
             cache = _cache;
         }

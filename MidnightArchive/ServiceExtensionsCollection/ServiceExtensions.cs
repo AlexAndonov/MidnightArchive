@@ -20,7 +20,7 @@ namespace Microsoft.Extensions.DependencyInjection
 			services.AddScoped<IEventService, EventService>();
 			services.AddScoped<IHomeService, HomeService>();
 			services.AddScoped<IReportService, ReportService>();
-			services.AddScoped<ICacheService, RedisCacheService>();
+			services.AddScoped<ICacheService, CacheService>();
 
 
 			services.AddAutoMapper(cfg =>
