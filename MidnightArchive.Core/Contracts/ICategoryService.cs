@@ -1,4 +1,5 @@
 ﻿using MidnightArchive.Core.DTOs.CategoryDTOs;
+using MidnightArchive.Infra.Data.Enums;
 
 namespace MidnightArchive.Core.Contracts
 {
@@ -9,8 +10,8 @@ namespace MidnightArchive.Core.Contracts
 		Task<CategoryDetailDto?> GetByIdAsync(int id, int page, int pageSize);
 		Task<CategoryEditDto?> GetForEditAsync(int id);
 		Task<CategoryDto> AddAsync(CategoryCreateDto model);
-		Task<bool> EditAsync(CategoryEditDto model);
-		Task<bool> SoftDeleteAsync(int id);
-		Task<bool> HardDeleteAsync(int id);
+		Task<CategoryOperationResult> EditAsync(CategoryEditDto model);
+		Task<CategoryOperationResult> SoftDeleteAsync(int id);
+		Task<CategoryOperationResult> HardDeleteAsync(int id);
 	}
 }

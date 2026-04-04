@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MidnightArchive.Core.Contracts;
 using MidnightArchive.Core.DTOs.CategoryDTOs;
+using MidnightArchive.Infra.Data.Enums;
 
 namespace MidnightArchive.Controllers
 {
@@ -90,9 +91,9 @@ namespace MidnightArchive.Controllers
 				return View(model);
 			}
 
-			bool success = await service.EditAsync(model);
+			CategoryOperationResult result = await service.EditAsync(model);
 
-			if (!success)
+			if (result == CategoryOperationResult.NotFound)
 			{
 				return NotFound();
 			}
@@ -126,9 +127,9 @@ namespace MidnightArchive.Controllers
 				return BadRequest();
 			}
 
-			var deleted = await service.SoftDeleteAsync(id);
+			CategoryOperationResult result = await service.SoftDeleteAsync(id);
 
-			if (!deleted)
+			if (result == CategoryOperationResult.NotFound)
 			{
 				return NotFound();
 			}

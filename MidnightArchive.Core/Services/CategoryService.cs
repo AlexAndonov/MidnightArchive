@@ -2,13 +2,11 @@
 using Microsoft.EntityFrameworkCore;
 using MidnightArchive.Core.Contracts;
 using MidnightArchive.Core.DTOs.CategoryDTOs;
-using MidnightArchive.Core.DTOs.CommentDTOs;
 using MidnightArchive.Core.DTOs.Common;
 using MidnightArchive.Core.DTOs.StoryDTOs;
 using MidnightArchive.Data;
+using MidnightArchive.Infra.Data.Enums;
 using MidnightArchive.Infra.Data.Models;
-using System.Net.Mime;
-using System.Runtime.InteropServices;
 
 namespace MidnightArchive.Core.Services
 {
@@ -37,28 +35,28 @@ namespace MidnightArchive.Core.Services
 			return mapper.Map<CategoryDto>(category);
 		}
 
-		public async Task<bool> SoftDeleteAsync(int id)
+		public async Task<CategoryOperationResult> SoftDeleteAsync(int id)
 		{
-			Category? category = await context.Categories.FirstOrDefaultAsync(c => c.Id == id);
+			Category? category = await context.Categories.FirstOrDefaultAsync(c => c.Id == id && !c.IsDeleted);
 
 			if (category == null)
 			{
-				return false;
+				return CategoryOperationResult.NotFound;
 			}
 
 			category.IsDeleted = true;
 			await context.SaveChangesAsync();
 
-			return true;
+			return CategoryOperationResult.Success;
 		}
 
-		public async Task<bool> EditAsync(CategoryEditDto model)
+		public async Task<CategoryOperationResult> EditAsync(CategoryEditDto model)
 		{
-			Category? category = await context.Categories.FirstOrDefaultAsync(c => c.Id == model.Id);
+			Category? category = await context.Categories.FirstOrDefaultAsync(c => c.Id == model.Id && !c.IsDeleted);
 
 			if (category == null)
 			{
-				return false;
+				return CategoryOperationResult.NotFound;
 			}
 
 			category.Title = model.Title;
@@ -66,7 +64,7 @@ namespace MidnightArchive.Core.Services
 
 			await context.SaveChangesAsync();
 
-			return true;
+			return CategoryOperationResult.Success;
 		}
 
 		public async Task<IEnumerable<CategoryListDto>> GetAllAsync()
@@ -138,9 +136,13 @@ namespace MidnightArchive.Core.Services
 
 			var category = await context.Categories
 				.Where(c => c.Id == id && !c.IsDeleted)
-				.Include(c => c.Stories.Where(s => !s.IsDeleted))
-					.ThenInclude(s => s.Author)
 				.AsNoTracking()
+				.Select(c => new
+				{
+					c.Id,
+					c.Title,
+					c.Description
+				})
 				.FirstOrDefaultAsync();
 
 			if (category == null)
@@ -148,15 +150,14 @@ namespace MidnightArchive.Core.Services
 				return null;
 			}
 
-			var storiesQuery = category.Stories
-				.Where(s => !s.IsDeleted)
-				.OrderByDescending(s => s.CreatedOn);
+			var storiesQuery = context.Stories
+				.Where(s => s.CategoryId == id && !s.IsDeleted)
+				.OrderByDescending(s => s.CreatedOn)
+				.AsNoTracking();
 
-			var totalStories = storiesQuery.Count();
+			int totalStories = await storiesQuery.CountAsync();
 
-			var stories = storiesQuery
-				.Skip((page - 1) * pageSize)
-				.Take(pageSize)
+			var stories = await storiesQuery
 				.Select(s => new StorySummaryDto
 				{
 					Id = s.Id,
@@ -165,12 +166,14 @@ namespace MidnightArchive.Core.Services
 						? s.Content.Substring(0, 100) + "..."
 						: s.Content,
 					CreatedOn = s.CreatedOn,
-					AuthorName = s.Author?.UserName ?? string.Empty,
+					AuthorName = s.IsAnonymous ? "Anonymous" : s.Author != null ? s.Author.UserName : "Anonymous",
 					ViewsCount = s.ViewsCount,
 					LikesCount = s.LikesCount,
 					IsAnonymous = s.IsAnonymous
 				})
-				.ToList();
+				.Skip((page - 1) * pageSize)
+				.Take(pageSize)
+				.ToListAsync();
 
 			return new CategoryDetailDto
 			{
@@ -201,19 +204,19 @@ namespace MidnightArchive.Core.Services
 			return mapper.Map<CategoryEditDto>(category);
 		}
 
-		public async Task<bool> HardDeleteAsync(int id)
+		public async Task<CategoryOperationResult> HardDeleteAsync(int id)
 		{
 			var category = await context.Categories.FirstOrDefaultAsync(c => c.Id == id);
 
 			if (category == null)
 			{
-				return false;
+				return CategoryOperationResult.NotFound;
 			}
 
 			context.Categories.Remove(category);
 			await context.SaveChangesAsync();
 
-			return true;
+			return CategoryOperationResult.Success;
 		}
 	}
 }
