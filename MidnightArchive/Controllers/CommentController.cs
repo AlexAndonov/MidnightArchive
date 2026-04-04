@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MidnightArchive.Core.Contracts;
 using MidnightArchive.Core.DTOs.CommentDTOs;
+using MidnightArchive.Infra.Data.Enums;
 using System.Security.Claims;
 
 namespace MidnightArchive.Controllers
@@ -28,9 +29,9 @@ namespace MidnightArchive.Controllers
 				return Unauthorized();
 
 
-			var success = await service.AddAsync(model, userId);
+			CommentOperationResult result = await service.AddAsync(model, userId);
 
-			if (!success)
+			if (result == CommentOperationResult.NotFound)
 				return NotFound();
 
 
@@ -48,10 +49,24 @@ namespace MidnightArchive.Controllers
 			if (string.IsNullOrEmpty(userId))
 				return Unauthorized();
 
-			bool success = await service.EditAsync(model, userId);
+			CommentOperationResult result = await service.EditAsync(model, userId);
 
-			if (!success)
-				return NotFound();
+			switch (result)
+			{
+				case CommentOperationResult.Success:
+					break;
+
+				case CommentOperationResult.NotFound:
+					return NotFound();
+
+				case CommentOperationResult.NotTheAuthor:
+					TempData["ErrorMessage"] = "You cannot edit this comment.";
+					break;
+
+				default:
+					TempData["ErrorMessage"] = "Something went wrong.";
+					break;
+			}
 
 			return RedirectToAction("Details", "Story", new { id = model.StoryId });
 		}
@@ -67,10 +82,24 @@ namespace MidnightArchive.Controllers
 			if (string.IsNullOrEmpty(userId))
 				return Unauthorized();
 
-			bool success = await service.HardDeleteAsync(id, userId);
+			CommentOperationResult result = await service.HardDeleteAsync(id, userId);
 
-			if (!success)
-				return NotFound();
+			switch (result)
+			{
+				case CommentOperationResult.Success:
+					break;
+
+				case CommentOperationResult.NotFound:
+					return NotFound();
+
+				case CommentOperationResult.NotTheAuthor:
+					TempData["ErrorMessage"] = "You can only delete your own comments.";
+					break;
+					
+				default:
+					TempData["ErrorMessage"] = "Something went wrong.";
+					break;
+			}
 
 			return RedirectToAction("Details", "Story", new { id = storyId });
 		}

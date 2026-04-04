@@ -3,13 +3,9 @@ using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using MidnightArchive.Core.Contracts;
 using MidnightArchive.Core.DTOs.CommentDTOs;
-using MidnightArchive.Core.Mappings;
 using MidnightArchive.Data;
+using MidnightArchive.Infra.Data.Enums;
 using MidnightArchive.Infra.Data.Models;
-using System;
-using System.Collections.Generic;
-using System.Net.Mime;
-using System.Text;
 
 namespace MidnightArchive.Core.Services
 {
@@ -23,12 +19,12 @@ namespace MidnightArchive.Core.Services
 			mapper = _mapper;
 		}
 
-		public async Task<bool> AddAsync(CommentCreateDto model, string userId)
+		public async Task<CommentOperationResult> AddAsync(CommentCreateDto model, string userId)
 		{
-			var story = await context.Stories.FirstOrDefaultAsync(s => s.Id == model.StoryId && !s.IsDeleted);
+			Story? story = await context.Stories.FirstOrDefaultAsync(s => s.Id == model.StoryId && !s.IsDeleted);
 
 			if (story == null)
-				return false;
+				return CommentOperationResult.NotFound;
 
 			Comment comment = new Comment()
 			{
@@ -39,51 +35,44 @@ namespace MidnightArchive.Core.Services
 			};
 
 			await context.Comments.AddAsync(comment);
-			if (await context.SaveChangesAsync() == 0)
-			{
-				return false;
-			}
+			await context.SaveChangesAsync();
 			
 
-			return true;
+			return CommentOperationResult.Success;
 		}
 
-		public async Task<bool> HardDeleteAsync(Guid id, string userId)
+		public async Task<CommentOperationResult> HardDeleteAsync(Guid id, string userId)
 		{
 			Comment? comment = await context.Comments.FirstOrDefaultAsync(c => c.Id == id);
 
 			if (comment == null)
-				return false;
+				return CommentOperationResult.NotFound;
 
 			if (userId != comment.AuthorId)
-				return false;
+				return CommentOperationResult.NotTheAuthor;
 
 			context.Comments.Remove(comment);
-			if (await context.SaveChangesAsync() == 0)
-				return false;
+			await context.SaveChangesAsync();
 
-			return true;
+			return CommentOperationResult.Success;
 		}
 
-		public async Task<bool> EditAsync(CommentEditDto model, string userId)
+		public async Task<CommentOperationResult> EditAsync(CommentEditDto model, string userId)
 		{
 			Comment? comment = await context.Comments.FirstOrDefaultAsync(c => c.Id == model.Id);
 
 			if (comment == null)
-				return false;
+				return CommentOperationResult.NotFound;
 
 			if (userId != comment.AuthorId)
-				return false;
+				return CommentOperationResult.NotTheAuthor;
 
 			comment.Content = model.Content;
 			comment.ModifiedOn = DateTime.UtcNow;
 
-			if (await context.SaveChangesAsync() == 0)
-			{
-				return false;
-			}
+			await context.SaveChangesAsync();
 
-			return true;
+			return CommentOperationResult.Success;
 		}
 
 		public async Task<IEnumerable<CommentDto>> GetAllForStoryAsync(Guid storyId)
