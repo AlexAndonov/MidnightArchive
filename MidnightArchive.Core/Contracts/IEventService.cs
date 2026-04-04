@@ -1,4 +1,5 @@
 ﻿using MidnightArchive.Core.DTOs.EventDTOs;
+using MidnightArchive.Infra.Data.Enums;
 using MidnightArchive.Infra.Data.Models;
 
 namespace MidnightArchive.Core.Contracts
@@ -9,8 +10,8 @@ namespace MidnightArchive.Core.Contracts
 		Task<EventDetailsDto?> GetByIdAsync(Guid id);
 		Task<EventEditDto?> GetByIdForEditAsync(Guid id);
 		Task<EventDetailsDto> AddAsync(EventCreateDto model, string userId);
-		Task<bool> EditAsync(EventEditDto model);
-		Task<bool> SoftDeleteAsync(Guid id);
-		Task<bool> HardDeleteAsync(Guid id);
+		Task<EventOperationResult> EditAsync(EventEditDto model);
+		Task<EventOperationResult> SoftDeleteAsync(Guid id);
+		Task<EventOperationResult> HardDeleteAsync(Guid id);
 	}
 }

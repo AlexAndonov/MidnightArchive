@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using MidnightArchive.Core.Contracts;
 using MidnightArchive.Core.DTOs.EventDTOs;
 using MidnightArchive.Data;
+using MidnightArchive.Infra.Data.Enums;
 using MidnightArchive.Infra.Data.Models;
 
 namespace MidnightArchive.Core.Services
@@ -40,25 +41,25 @@ namespace MidnightArchive.Core.Services
 			return mapper.Map<EventDetailsDto>(eventEntity);
 		}
 
-		public async Task<bool> SoftDeleteAsync(Guid id)
+		public async Task<EventOperationResult> SoftDeleteAsync(Guid id)
 		{
 			Event? eventEntity = await context.Events.FirstOrDefaultAsync(e => e.Id == id && !e.IsDeleted);
 
 			if (eventEntity == null)
-				return false;
+				return EventOperationResult.NotFound;
 
 			eventEntity.IsDeleted = true;
 			await context.SaveChangesAsync();
 
-			return true;
+			return EventOperationResult.Success;
 		}
 
-		public async Task<bool> EditAsync(EventEditDto model)
+		public async Task<EventOperationResult> EditAsync(EventEditDto model)
 		{
 			Event? eventEntity = await context.Events.FirstOrDefaultAsync(e => e.Id == model.Id && !e.IsDeleted);
 
 			if (eventEntity == null)
-				return false;
+				return EventOperationResult.NotFound;
 
 			if (model.EndDate <= model.StartDate)
 				throw new ArgumentException("End Date must be after Start Date");
@@ -71,7 +72,7 @@ namespace MidnightArchive.Core.Services
 
 			await context.SaveChangesAsync();
 
-			return true;
+			return EventOperationResult.Success;
 		}
 
 		public async Task<IEnumerable<EventListDto>> GetAllAsync()
@@ -93,17 +94,17 @@ namespace MidnightArchive.Core.Services
 
 		}
 
-		public async Task<bool> HardDeleteAsync(Guid id)
+		public async Task<EventOperationResult> HardDeleteAsync(Guid id)
 		{
 			Event? eventEntity = await context.Events.FirstOrDefaultAsync(e => e.Id == id && !e.IsDeleted);
 
 			if (eventEntity == null)
-				return false;
+				return EventOperationResult.NotFound;
 
 			context.Events.Remove(eventEntity);
 			await context.SaveChangesAsync();
 
-			return true;
+			return EventOperationResult.Success;
 		}
 
 		public async Task<EventEditDto?> GetByIdForEditAsync(Guid id)

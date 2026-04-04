@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MidnightArchive.Core.Contracts;
 using MidnightArchive.Core.DTOs.EventDTOs;
+using MidnightArchive.Infra.Data.Enums;
 using System.Security.Claims;
 
 namespace MidnightArchive.Controllers
@@ -80,9 +81,9 @@ namespace MidnightArchive.Controllers
 
 			try
 			{
-				bool success = await service.EditAsync(model);
+				EventOperationResult result = await service.EditAsync(model);
 
-				if (!success)
+				if (result == EventOperationResult.NotFound)
 					return NotFound();
 			}
 			catch (ArgumentException ex)
@@ -108,9 +109,9 @@ namespace MidnightArchive.Controllers
 		[HttpPost, ActionName("SoftDelete")]
 		public async Task<IActionResult> SoftDeleteConfirmed(Guid id)
 		{
-			bool success = await service.SoftDeleteAsync(id);
+			EventOperationResult result = await service.SoftDeleteAsync(id);
 
-			if (!success)
+			if (result == EventOperationResult.NotFound)
 				return NotFound();
 
 			return RedirectToAction(nameof(Index));
@@ -130,9 +131,9 @@ namespace MidnightArchive.Controllers
 		[HttpPost, ActionName("HardDelete")]
 		public async Task<IActionResult> HardDeleteConfirmed(Guid id)
 		{
-			bool success = await service.HardDeleteAsync(id);
+			EventOperationResult result = await service.HardDeleteAsync(id);
 
-			if (!success)
+			if (result == EventOperationResult.NotFound)
 				return NotFound();
 
 			return RedirectToAction(nameof(Index));
