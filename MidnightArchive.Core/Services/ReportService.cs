@@ -2,6 +2,7 @@
 using MidnightArchive.Core.Contracts;
 using MidnightArchive.Core.DTOs.ReportDTOs;
 using MidnightArchive.Data;
+using MidnightArchive.Infra.Data.Enums;
 using MidnightArchive.Infra.Data.Models;
 
 namespace MidnightArchive.Core.Services
@@ -15,23 +16,19 @@ namespace MidnightArchive.Core.Services
 			context = _context;
 		}
 
-		public async Task CreateAsync(ReportCreateDto model, string userId)
+		public async Task<ReportOperationResult> CreateAsync(ReportCreateDto model, string userId)
 		{
 			bool storyExists = await context.Stories
 				.AnyAsync(s => s.Id == model.StoryId && !s.IsDeleted);
 
 			if (!storyExists)
-			{
-				throw new ArgumentException("Story does not exist.");
-			}
+				return ReportOperationResult.StoryNotFound;
 
 			bool alreadyReported = await context.Reports
 				.AnyAsync(r => r.StoryId == model.StoryId && r.ReporterId == userId && !r.IsResolved);
 
 			if (alreadyReported)
-			{
-				throw new InvalidOperationException("You have already reported this story.");
-			}
+				return ReportOperationResult.AlreadyReported;
 
 			Report report = new Report
 			{
@@ -45,6 +42,8 @@ namespace MidnightArchive.Core.Services
 
 			await context.Reports.AddAsync(report);
 			await context.SaveChangesAsync();
+
+			return ReportOperationResult.Success;
 		}
 
 		public async Task<IEnumerable<ReportListDto>> GetAllAsync()
@@ -66,19 +65,19 @@ namespace MidnightArchive.Core.Services
 				.ToListAsync();
 		}
 
-		public async Task ResolveAsync(Guid reportId)
+		public async Task<ReportOperationResult> ResolveAsync(Guid reportId)
 		{
 			Report? report = await context.Reports
 				.FirstOrDefaultAsync(r => r.Id == reportId);
 
 			if (report == null)
-			{
-				throw new ArgumentException("Report not found.");
-			}
+				return ReportOperationResult.ReportNotFound;
 
 			report.IsResolved = true;
 
 			await context.SaveChangesAsync();
+
+			return ReportOperationResult.Success;
 		}
 	}
 }

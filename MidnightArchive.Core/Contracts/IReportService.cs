@@ -1,4 +1,5 @@
 ﻿using MidnightArchive.Core.DTOs.ReportDTOs;
+using MidnightArchive.Infra.Data.Enums;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,8 +8,8 @@ namespace MidnightArchive.Core.Contracts
 {
 	public interface IReportService
 	{
-		Task CreateAsync(ReportCreateDto model, string userId);
+		Task<ReportOperationResult> CreateAsync(ReportCreateDto model, string userId);
 		Task<IEnumerable<ReportListDto>> GetAllAsync();
-		Task ResolveAsync(Guid reportId);
+		Task<ReportOperationResult> ResolveAsync(Guid reportId);
 	}
 }
