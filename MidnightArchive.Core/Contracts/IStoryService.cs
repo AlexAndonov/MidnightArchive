@@ -1,4 +1,5 @@
 ﻿using MidnightArchive.Core.DTOs.StoryDTOs;
+using MidnightArchive.Infra.Data.Enums;
 using System.Xml;
 
 namespace MidnightArchive.Core.Contracts
@@ -7,17 +8,17 @@ namespace MidnightArchive.Core.Contracts
 	{
 		Task<StoryDetailDto?> GetByIdAsync(Guid id, string? userId);
 		Task<StoryFormDto?> GetByIdForEditAsync(Guid id);
-		Task<Guid?> GetRadnomStoryIdAsync();
+		Task<Guid?> GetRandomStoryIdAsync();
 		Task<IEnumerable<StorySummaryDto>> GetAllAsync();
 		Task<IEnumerable<StorySummaryDto>> GetStoriesByCategoryAsync(int categoryId);
 		Task<StoryDetailDto> AddAsync(StoryCreateDto model, string userId);
-		Task<bool> EditAsync(StoryFormDto model);
-		Task<bool> SoftDeleteAsync(Guid id);
-		Task<bool> HardDeleteAsync(Guid id);
+		Task<StoryOperationResult> EditAsync(StoryFormDto model);
+		Task<StoryOperationResult> SoftDeleteAsync(Guid id);
+		Task<StoryOperationResult> HardDeleteAsync(Guid id);
 		Task<bool> IsAuthorAsync(Guid storyId, string userId);
-		Task<bool> IncrementViewsAsync(Guid storyId);
-		Task<bool> LikeAsync(Guid storyId, string userId);
-		Task<bool> UnlikeAsync(Guid storyId, string userId);
+		Task<StoryOperationResult> IncrementViewsAsync(Guid storyId);
+		Task<StoryOperationResult> LikeAsync(Guid storyId, string userId);
+		Task<StoryOperationResult> UnlikeAsync(Guid storyId, string userId);
 		Task<bool> HasUserLikedAsync(Guid storyId, string userId);
 	}
 }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using MidnightArchive.Core.Contracts;
 using MidnightArchive.Core.DTOs.StoryDTOs;
+using MidnightArchive.Infra.Data.Enums;
 using System.Security.Claims;
 
 namespace MidnightArchive.Controllers
@@ -15,7 +16,7 @@ namespace MidnightArchive.Controllers
 
 		public StoryController(IStoryService _service, ICategoryService _categoryService)
 		{
-			service = _service;	
+			service = _service;
 			categoryService = _categoryService;
 		}
 
@@ -66,8 +67,12 @@ namespace MidnightArchive.Controllers
 
 			if (!alreadyViewed)
 			{
-				await service.IncrementViewsAsync(id);
-				story.ViewsCount++;
+				var viewResult = await service.IncrementViewsAsync(id);
+
+				if (viewResult == StoryOperationResult.Success)
+				{
+					story.ViewsCount++;
+				}
 
 				CookieOptions options = new CookieOptions
 				{
@@ -88,14 +93,15 @@ namespace MidnightArchive.Controllers
 		[AllowAnonymous]
 		public async Task<IActionResult> Random()
 		{
-			Guid? storyId = await service.GetRadnomStoryIdAsync();
+			Guid? storyId = await service.GetRandomStoryIdAsync();
 
 			if (storyId == null)
+			{
 				return NotFound();
+			}
 
 			return RedirectToAction(nameof(Details), new { id = storyId.Value });
 		}
-
 
 		[HttpGet]
 		public async Task<IActionResult> Create()
@@ -110,8 +116,9 @@ namespace MidnightArchive.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Create(StoryCreateDto model)
 		{
-			if (ModelState.IsValid == false)
+			if (!ModelState.IsValid)
 			{
+				ViewBag.Categories = new SelectList(await categoryService.GetAllAsync(), "Id", "Title");
 				return View(model);
 			}
 
@@ -119,7 +126,7 @@ namespace MidnightArchive.Controllers
 
 			StoryDetailDto story = await service.AddAsync(model, userId);
 
-			return RedirectToAction(nameof(Details), new { Id = story.Id });
+			return RedirectToAction(nameof(Details), new { id = story.Id });
 		}
 
 		[HttpGet]
@@ -162,21 +169,20 @@ namespace MidnightArchive.Controllers
 				return Forbid();
 			}
 
-			if (ModelState.IsValid == false)
+			if (!ModelState.IsValid)
 			{
 				ViewBag.Categories = new SelectList(await categoryService.GetAllAsync(), "Id", "Title");
 				return View(model);
 			}
 
-			bool success = await service.EditAsync(model);
+			StoryOperationResult result = await service.EditAsync(model);
 
-			if (!success)
+			if (result == StoryOperationResult.NotFound)
 			{
 				return NotFound();
 			}
 
-
-			return RedirectToAction(nameof(Details), new { Id = model.Id });
+			return RedirectToAction(nameof(Details), new { id = model.Id });
 		}
 
 		[HttpGet]
@@ -194,7 +200,7 @@ namespace MidnightArchive.Controllers
 			{
 				return NotFound();
 			}
-			
+
 			bool isAuthor = await service.IsAuthorAsync(story.Id, userId);
 			bool isAdmin = User.IsInRole("Admin");
 
@@ -221,15 +227,14 @@ namespace MidnightArchive.Controllers
 			bool isAuthor = await service.IsAuthorAsync(id, userId);
 			bool isAdmin = User.IsInRole("Admin");
 
-
 			if (!isAuthor && !isAdmin)
 			{
 				return Forbid();
 			}
 
-			bool deleted = await service.SoftDeleteAsync(id);
+			StoryOperationResult result = await service.SoftDeleteAsync(id);
 
-			if (!deleted)
+			if (result == StoryOperationResult.NotFound)
 			{
 				return NotFound();
 			}
@@ -248,14 +253,23 @@ namespace MidnightArchive.Controllers
 
 			string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
-			bool result = await service.LikeAsync(id, userId);
+			StoryOperationResult result = await service.LikeAsync(id, userId);
 
-			if (!result)
+			switch (result)
 			{
-				return BadRequest();
-			}
+				case StoryOperationResult.Success:
+					return RedirectToAction(nameof(Details), new { id });
 
-			return RedirectToAction(nameof(Details), new { id });
+				case StoryOperationResult.NotFound:
+					return NotFound();
+
+				case StoryOperationResult.AlreadyLiked:
+					TempData["WarningMessage"] = "You have already liked this story.";
+					return RedirectToAction(nameof(Details), new { id });
+
+				default:
+					return BadRequest();
+			}
 		}
 
 		[HttpPost]
@@ -269,14 +283,23 @@ namespace MidnightArchive.Controllers
 
 			string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
-			bool result = await service.UnlikeAsync(id, userId);
+			StoryOperationResult result = await service.UnlikeAsync(id, userId);
 
-			if (!result)
+			switch (result)
 			{
-				return BadRequest();
-			}
+				case StoryOperationResult.Success:
+					return RedirectToAction(nameof(Details), new { id });
 
-			return RedirectToAction(nameof(Details), new { id });
+				case StoryOperationResult.NotFound:
+					return NotFound();
+
+				case StoryOperationResult.LikeNotFound:
+					TempData["WarningMessage"] = "You have not liked this story yet.";
+					return RedirectToAction(nameof(Details), new { id });
+
+				default:
+					return BadRequest();
+			}
 		}
 
 		private string GetStoryViewCookieKey(Guid storyId)
