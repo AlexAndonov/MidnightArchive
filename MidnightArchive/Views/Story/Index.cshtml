@@ -1,0 +1,47 @@
+﻿@model IEnumerable<MidnightArchive.Core.DTOs.StoryDTOs.StorySummaryDto>
+
+@{
+    ViewData["Title"] = "Stories";
+}
+
+<div class="story-index-container">
+
+    <h1 class="page-title">Stories</h1>
+
+    @if (!Model.Any())
+    {
+        <div class="empty-state">
+            <h3>No stories yet.</h3>
+            <p>Be the first to share one.</p>
+        </div>
+    }
+    else
+    {
+        <div class="stories-grid">
+            @foreach (var story in Model)
+            {
+                <div class="story-card">
+    <h3 class="story-title">@story.Title</h3>
+
+    @if (!story.IsAnonymous)
+    {
+        <span class="story-author">by @story.AuthorName</span>
+    }
+
+    <p class="story-excerpt">@story.Preview</p>
+
+    <div class="story-stats">
+        <span>@story.ViewsCount views</span>
+        <span>@story.LikesCount likes</span>
+    </div>
+
+    <a asp-action="Details"
+       asp-route-id="@story.Id"
+       class="read-story-link">Read Story →</a>
+</div>
+
+            }
+        </div>
+    }
+
+</div>
