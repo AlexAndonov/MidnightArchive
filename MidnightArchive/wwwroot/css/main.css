@@ -5,7 +5,9 @@
 @import '../css/layout/homepage/homepage.css';
 @import '../css/layout/hero.css';
 @import '../css/layout/header.css';
-@import '../css/layout/auth-pages.css';
+@import '../css/layout/account/auth-pages.css';
+@import '../css/layout/account/account-manage.css';
+@import '../css/layout/account/profile.css';
 @import '../css/layout/categories/categories-index.css';
 @import '../css/layout/categories/categories-form.css';
 @import '../css/layout/categories/categories-details.css';
@@ -16,3 +18,4 @@
 @import '../css/layout/event/event-details.css';
 @import '../css/layout/event/event-create.css';
 @import '../css/layout/report/report.css';
+@import '../css/error/error.css';
