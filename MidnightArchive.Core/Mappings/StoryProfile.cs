@@ -20,6 +20,9 @@ namespace MidnightArchive.Core.Mappings
 				(
 					dest => dest.AuthorName,
 					opt => opt.MapFrom(src => src.IsAnonymous ? null : src.Author.UserName)
+				).ForMember(
+					dest => dest.IsLikedByCurrentUser,
+					opt => opt.Ignore()
 				);
 
 			CreateMap<Story, StoryFormDto>();
