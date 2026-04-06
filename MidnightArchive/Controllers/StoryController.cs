@@ -22,25 +22,26 @@ namespace MidnightArchive.Controllers
 
 		[HttpGet]
 		[AllowAnonymous]
-		public async Task<IActionResult> Index(int? categoryId)
+		public async Task<IActionResult> Index(int? categoryId, int page = 1)
 		{
-			IEnumerable<StorySummaryDto> stories;
-
 			if (categoryId.HasValue && categoryId.Value <= 0)
 			{
 				return BadRequest();
 			}
 
-			if (categoryId.HasValue)
-			{
-				stories = await service.GetStoriesByCategoryAsync(categoryId.Value);
-			}
-			else
-			{
-				stories = await service.GetAllAsync();
-			}
+			const int pageSize = 9;
 
-			return View(stories);
+			var stories = await service.GetAllPagedAsync(page, pageSize, categoryId);
+			var categories = await categoryService.GetAllAsync();
+
+			var model = new StoryIndexViewModel
+			{
+				Stories = stories,
+				Categories = categories,
+				SelectedCategoryId = categoryId
+			};
+
+			return View(model);
 		}
 
 		[HttpGet]
