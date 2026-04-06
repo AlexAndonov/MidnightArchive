@@ -4,11 +4,12 @@ using System.Text;
 
 namespace MidnightArchive.Infra.Data.Enums
 {
-	public enum EventOperationResult
+	public enum EventJoinResult
 	{
-		Success  = 1,
+		Success = 1,
 		NotFound = 2,
-		NotOwner = 3,
-		InvalidDateRange = 4,
+		AlreadyJoined = 3,
+		EventEnded = 4,
+		OwnEvent = 5
 	}
 }
