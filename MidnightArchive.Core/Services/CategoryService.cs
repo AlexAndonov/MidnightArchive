@@ -89,6 +89,7 @@ namespace MidnightArchive.Core.Services
 				.Where(c => c.Id == id && !c.IsDeleted)
 				.AsNoTracking()
 				.Include(c => c.Stories.Where(s => !s.IsDeleted))
+				.ThenInclude(s => s.Author)
 				.FirstOrDefaultAsync();
 
 			if (category == null) return null;
@@ -109,7 +110,7 @@ namespace MidnightArchive.Core.Services
 							Title = s.Title,
 							Preview = s.Content.Length > 100 ? s.Content.Substring(0, 100) + "..." : s.Content,
 							CreatedOn = s.CreatedOn,
-							AuthorName = s.Author?.UserName ?? string.Empty,
+							AuthorName = s.IsAnonymous ? "Anonymous" : s.Author != null ? s.Author.UserName : "Anonymous",
 							ViewsCount = s.ViewsCount,
 							LikesCount = s.LikesCount,
 							IsAnonymous = s.IsAnonymous
