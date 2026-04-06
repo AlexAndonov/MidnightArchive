@@ -23,15 +23,15 @@ namespace MidnightArchive.Core.Services
 		public async Task<EventDetailsDto> AddAsync(EventCreateDto model, string userId)
 		{
 			if (model.EndDate <= model.StartDate)
-				throw new ArgumentException("End Date must be after Start Date");
+				throw new ArgumentException("End date must be after Start date!");
 
 			Event eventEntity = new Event()
 			{
 				Title = model.Title,
 				Description = model.Description,
-				Location = model.Location ?? "Online",
-				StartDate = model.StartDate,
-				EndDate = model.EndDate,
+				Location = string.IsNullOrWhiteSpace(model.Location) ? "Online" : model.Location,
+				StartDate = model.StartDate.Date,
+				EndDate = model.EndDate.Date.AddDays(1).AddTicks(-1),
 				CreatorId = userId
 			};
 
@@ -41,12 +41,15 @@ namespace MidnightArchive.Core.Services
 			return mapper.Map<EventDetailsDto>(eventEntity);
 		}
 
-		public async Task<EventOperationResult> SoftDeleteAsync(Guid id)
+		public async Task<EventOperationResult> SoftDeleteAsync(Guid id, string userId)
 		{
 			Event? eventEntity = await context.Events.FirstOrDefaultAsync(e => e.Id == id && !e.IsDeleted);
 
 			if (eventEntity == null)
 				return EventOperationResult.NotFound;
+
+			if (eventEntity.CreatorId != userId)
+				return EventOperationResult.NotOwner;
 
 			eventEntity.IsDeleted = true;
 			await context.SaveChangesAsync();
@@ -54,21 +57,24 @@ namespace MidnightArchive.Core.Services
 			return EventOperationResult.Success;
 		}
 
-		public async Task<EventOperationResult> EditAsync(EventEditDto model)
+		public async Task<EventOperationResult> EditAsync(EventEditDto model, string userId)
 		{
 			Event? eventEntity = await context.Events.FirstOrDefaultAsync(e => e.Id == model.Id && !e.IsDeleted);
 
 			if (eventEntity == null)
 				return EventOperationResult.NotFound;
 
+			if (eventEntity.CreatorId != userId)
+				return EventOperationResult.NotOwner;
+
 			if (model.EndDate <= model.StartDate)
-				throw new ArgumentException("End Date must be after Start Date");
+				return EventOperationResult.InvalidDateRange;
 
 			eventEntity.Title = model.Title;
 			eventEntity.Description = model.Description;
-			eventEntity.Location = model.Location ?? "Online";
-			eventEntity.StartDate = model.StartDate;
-			eventEntity.EndDate = model.EndDate;
+			eventEntity.Location = string.IsNullOrWhiteSpace(model.Location) ? "Online" : model.Location;
+			eventEntity.StartDate = model.StartDate.Date;
+			eventEntity.EndDate = model.EndDate.Date.AddDays(1).AddTicks(-1);
 
 			await context.SaveChangesAsync();
 
@@ -84,22 +90,37 @@ namespace MidnightArchive.Core.Services
 				.ToListAsync();
 		}
 
-		public async Task<EventDetailsDto?> GetByIdAsync(Guid id)
+		public async Task<EventDetailsDto?> GetByIdAsync(Guid id, string? userId)
 		{
 			return await context.Events
 				.AsNoTracking()
 				.Where(e => e.Id == id && !e.IsDeleted)
-				.ProjectTo<EventDetailsDto>(mapper.ConfigurationProvider)
+				.Select(e => new EventDetailsDto
+				{
+					Id = e.Id,
+					Title = e.Title,
+					Description = e.Description,
+					Location = e.Location,
+					CreatorId = e.CreatorId,
+					CreatorName = e.Creator.UserName!,
+					StartDate = e.StartDate,
+					EndDate = e.EndDate,
+					ParticipantsCounts = e.Participants.Count,
+					IsJoinedByCurrentUser = !string.IsNullOrWhiteSpace(userId)
+						&& e.Participants.Any(p => p.ParticipantId == userId)
+				})
 				.FirstOrDefaultAsync();
-
 		}
 
-		public async Task<EventOperationResult> HardDeleteAsync(Guid id)
+		public async Task<EventOperationResult> HardDeleteAsync(Guid id, string userId)
 		{
 			Event? eventEntity = await context.Events.FirstOrDefaultAsync(e => e.Id == id && !e.IsDeleted);
 
 			if (eventEntity == null)
 				return EventOperationResult.NotFound;
+
+			if (eventEntity.CreatorId != userId)
+				return EventOperationResult.NotOwner;
 
 			context.Events.Remove(eventEntity);
 			await context.SaveChangesAsync();
@@ -113,6 +134,81 @@ namespace MidnightArchive.Core.Services
 				.Where(e => e.Id == id && !e.IsDeleted)
 				.ProjectTo<EventEditDto>(mapper.ConfigurationProvider)
 				.FirstOrDefaultAsync();
+		}
+
+		public async Task<bool> IsOwnerAsync(Guid eventId, string userId)
+		{
+			return await context.Events.AnyAsync(e => e.Id == eventId && e.CreatorId == userId && !e.IsDeleted);
+		}
+
+		public async Task<EventJoinResult> JoinAsync(Guid eventId, string userId)
+		{
+			Event? eventEntity = await context.Events
+					.FirstOrDefaultAsync(e => e.Id == eventId && !e.IsDeleted);
+
+			if (eventEntity == null)
+			{
+				return EventJoinResult.NotFound;
+			}
+
+			if (eventEntity.CreatorId == userId)
+			{
+				return EventJoinResult.OwnEvent;
+			}
+
+			if (eventEntity.EndDate <= DateTime.UtcNow)
+			{
+				return EventJoinResult.EventEnded;
+			}
+
+			bool alreadyJoined = await context.EventParticipants
+				.AnyAsync(ep => ep.EventId == eventId && ep.ParticipantId == userId);
+
+			if (alreadyJoined)
+			{
+				return EventJoinResult.AlreadyJoined;
+			}
+
+			EventParticipant participant = new EventParticipant()
+			{
+				EventId = eventId,
+				ParticipantId = userId,
+				JoinedOn = DateTime.UtcNow
+			};
+
+			await context.EventParticipants.AddAsync(participant);
+			await context.SaveChangesAsync();
+
+			return EventJoinResult.Success;
+		}
+
+		public async Task<EventLeaveResult> LeaveAsync(Guid eventId, string userId)
+		{
+			Event? eventEntity = await context.Events
+				.FirstOrDefaultAsync(e => e.Id == eventId && !e.IsDeleted);
+
+			if (eventEntity == null)
+			{
+				return EventLeaveResult.NotFound;
+			}
+
+			if (eventEntity.CreatorId == userId)
+			{
+				return EventLeaveResult.OwnEvent;
+			}
+
+			EventParticipant? participant = await context.EventParticipants
+				.FirstOrDefaultAsync(ep => ep.EventId == eventId && ep.ParticipantId == userId);
+
+			if (participant == null)
+			{
+				return EventLeaveResult.NotJoined;
+			}
+
+			context.EventParticipants.Remove(participant);
+			await context.SaveChangesAsync();
+
+			return EventLeaveResult.Success;
 		}
 	}
 }

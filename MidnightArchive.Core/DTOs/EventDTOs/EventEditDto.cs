@@ -16,10 +16,12 @@ namespace MidnightArchive.Core.DTOs.EventDTOs
 		[StringLength(EventDescriptionMaxLength, MinimumLength = EventDescriptionMinLength)]
 		public string Description { get; set; } = null!;
 
-
 		public string? Location { get; set; }
 
+		[DataType(DataType.DateTime)]
 		public DateTime StartDate { get; set; }
+
+		[DataType(DataType.DateTime)]
 
 		public DateTime EndDate { get; set; }
 	}
