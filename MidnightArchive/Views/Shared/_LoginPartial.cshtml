@@ -16,7 +16,7 @@
             </button>
 
             <div class="user-dropdown-menu">
-                <a class="user-dropdown-link" asp-controller="Profile" asp-action="MyProfile">My Profile</a>
+                <a class="user-dropdown-link" asp-area="" asp-controller="Profile" asp-action="MyProfile">My Profile</a>
                 <a class="user-dropdown-link" asp-area="Identity" asp-page="/Account/Manage/Index">Account Settings</a>
                 @if (User.IsInRole("Admin"))
                 {
