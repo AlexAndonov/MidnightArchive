@@ -1,5 +1,9 @@
 <Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="coverage.runsettings" />
+  </Folder>
   <Project Path="MidnightArchive.Core/MidnightArchive.Core.csproj" />
   <Project Path="MidnightArchive.Infra/MidnightArchive.Infra.csproj" />
+  <Project Path="MidnightArchive.Tests/MidnightArchive.Tests.csproj" Id="dd132c43-b3ef-4b5a-a9db-e968ef0d4436" />
   <Project Path="MidnightArchive/MidnightArchive.csproj" />
 </Solution>
