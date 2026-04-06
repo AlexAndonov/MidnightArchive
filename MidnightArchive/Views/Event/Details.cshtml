@@ -1,12 +1,32 @@
-﻿@model MidnightArchive.Core.DTOs.EventDTOs.EventDetailsDto
+﻿@using System.Security.Claims
+@model MidnightArchive.Core.DTOs.EventDTOs.EventDetailsDto
 
 @{
     ViewData["Title"] = "Event Details";
+
+    string? currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    bool isAuthenticated = User.Identity?.IsAuthenticated ?? false;
+    bool isOwner = isAuthenticated && currentUserId == Model.CreatorId;
 }
 
 <section class="event-details-page">
     <div class="container">
         <article class="event-details-card">
+
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success">
+                    @TempData["SuccessMessage"]
+                </div>
+            }
+
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger">
+                    @TempData["ErrorMessage"]
+                </div>
+            }
+
             <div class="event-details-header">
                 <div class="event-details-meta">
                     <span class="event-details-date">
@@ -46,26 +66,18 @@
                             <span class="event-details-value">@Model.EndDate.ToString("dd MMM yyyy HH:mm")</span>
                         </div>
 
-                        @if (!string.IsNullOrWhiteSpace(Model.Location))
-                        {
-                            <div class="event-details-info-item">
-                                <span class="event-details-label">Location:</span>
-                                <span class="event-details-value">@Model.Location</span>
-                            </div>
-                        }
-                        else
-                        {
-                            <div class="event-details-info-item">
-                                <span class="event-details-label">Location:</span>
-                                <span class="event-details-value">Online</span>
-                            </div>
-                        }
+                        <div class="event-details-info-item">
+                            <span class="event-details-label">Location:</span>
+                            <span class="event-details-value">
+                                @(string.IsNullOrWhiteSpace(Model.Location) ? "Online" : Model.Location)
+                            </span>
+                        </div>
 
-                        @if (!string.IsNullOrWhiteSpace(Model.Creator))
+                        @if (!string.IsNullOrWhiteSpace(Model.CreatorName))
                         {
                             <div class="event-details-info-item">
                                 <span class="event-details-label">Created by:</span>
-                                <span class="event-details-value">@Model.Creator</span>
+                                <span class="event-details-value">@Model.CreatorName</span>
                             </div>
                         }
 
@@ -79,8 +91,31 @@
 
             <div class="event-details-actions">
                 <a asp-action="Index" class="btn btn-outline">Back to Events</a>
-                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
-                <a asp-action="SoftDelete" asp-route-id="@Model.Id" class="btn btn-outline">Delete</a>
+
+                @if (isOwner)
+                {
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
+                    <a asp-action="SoftDelete" asp-route-id="@Model.Id" class="btn btn-outline">Delete</a>
+                }
+                else if (isAuthenticated)
+                {
+                    @if (Model.IsJoinedByCurrentUser)
+                    {
+                        <form asp-action="Leave" asp-route-id="@Model.Id" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-outline">Leave Event</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <form asp-action="Join" asp-route-id="@Model.Id" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-primary">Join Event</button>
+                        </form>
+                    }
+                }
+                else
+                {
+                    <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-primary">Log in to Join</a>
+                }
             </div>
         </article>
     </div>
