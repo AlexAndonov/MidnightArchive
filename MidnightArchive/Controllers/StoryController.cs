@@ -49,7 +49,7 @@ namespace MidnightArchive.Controllers
 		{
 			if (id == Guid.Empty)
 			{
-				return BadRequest();
+				return NotFound();
 			}
 
 			string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
