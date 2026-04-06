@@ -4,15 +4,16 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] MidnightArchive</title>
-    <link href="/css/main.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/main.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 
+    @RenderSection("Styles", required: false)
  </head>
 <body>
     <header>
         <nav>
-            <a asp-controller="Home" asp-action="Index" class="logo">NIGHT WHISPER</a>
+            <a asp-area="" asp-controller="Home" asp-action="Index" class="logo">Midnight Archive</a>
             <ul>
                 <li><a asp-action="Index" asp-controller="Category" class="btn btn-ghost">Categories</a></li>
                 <li><a asp-action="Index" asp-controller="Event" class="btn btn-ghost">Events</a></li>
