@@ -1,0 +1,56 @@
+﻿@using MidnightArchive.Core.DTOs.ReportDTOs
+@model IEnumerable<ReportedStoryAdminDto>
+
+@{
+    ViewData["Title"] = "Reported Stories";
+}
+
+<section class="profile-page">
+    <div class="container">
+        <div class="profile-header">
+            <h1>Reported Stories</h1>
+        </div>
+
+        <div class="profile-section">
+            @if (!Model.Any())
+            {
+                <p>There are no reported stories at the moment.</p>
+            }
+            else
+            {
+                <div class="profile-grid">
+                    @foreach (var report in Model)
+                    {
+                        <article class="profile-card">
+                            <h3>@report.StoryTitle</h3>
+                            <p><strong>Author:</strong> @report.AuthorName</p>
+                            <p><strong>Reports:</strong> @report.ReportsCount</p>
+                            <p><strong>Latest report:</strong> @report.LatestReportDate.ToString("dd MMM yyyy")</p>
+                            <p><strong>Reason:</strong> @report.LatestReason</p>
+
+                            @if (!string.IsNullOrWhiteSpace(report.LatestDescription))
+                            {
+                                <p><strong>Description:</strong> @report.LatestDescription</p>
+                            }
+
+                            <div>
+                                <a href="@Url.Action("Details", "Story", new { area = "", id = report.StoryId })">
+                                    View Story
+                                </a>
+                            </div>
+                            <form action="@Url.Action("Resolve", "Reports", new { area = "Admin" })"
+                                  method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="storyId" value="@report.StoryId" />
+
+                                <button type="submit" class="btn btn-primary">
+                                    Resolve
+                                </button>
+                            </form>
+                        </article>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</section>
