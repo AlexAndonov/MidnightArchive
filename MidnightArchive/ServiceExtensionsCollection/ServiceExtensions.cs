@@ -20,6 +20,8 @@ namespace Microsoft.Extensions.DependencyInjection
 			services.AddScoped<IEventService, EventService>();
 			services.AddScoped<IHomeService, HomeService>();
 			services.AddScoped<IReportService, ReportService>();
+			services.AddScoped<IProfileService, ProfileService>();
+			services.AddScoped<IAdminService, AdminService>();
 			services.AddScoped<ICacheService, CacheService>();
 
 
