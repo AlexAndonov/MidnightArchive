@@ -1,47 +1,106 @@
-﻿@model IEnumerable<MidnightArchive.Core.DTOs.StoryDTOs.StorySummaryDto>
+﻿@using MidnightArchive.Core.DTOs.StoryDTOs
+@model StoryIndexViewModel
 
 @{
     ViewData["Title"] = "Stories";
 }
 
-<div class="story-index-container">
+<section class="category-details-page">
+    <header class="category-hero">
+        <h1 class="category-hero-title">Stories</h1>
+        <p class="category-hero-description">
+            Browse all published stories or filter them by category.
+        </p>
+        <span>@Model.Stories.TotalCount @(Model.Stories.TotalCount == 1 ? "story" : "stories")</span>
+    </header>
 
-    <h1 class="page-title">Stories</h1>
+    <section class="category-stories-section">
 
-    @if (!Model.Any())
-    {
-        <div class="empty-state">
-            <h3>No stories yet.</h3>
-            <p>Be the first to share one.</p>
-        </div>
-    }
-    else
-    {
-        <div class="stories-grid">
-            @foreach (var story in Model)
+        <form method="get" asp-action="Index" class="category-action-buttons" style="margin-bottom: 2rem;">
+            <select name="categoryId" class="form-select" style="max-width: 260px;">
+                <option value="">All Categories</option>
+                @foreach (var category in Model.Categories)
+                {
+                    if (Model.SelectedCategoryId == category.Id)
+                    {
+                        <option value="@category.Id" selected>@category.Title</option>
+                    }
+                    else
+                    {
+                        <option value="@category.Id">@category.Title</option>
+                    }
+                }
+            </select>
+
+            <button type="submit" class="btn btn-primary">Filter</button>
+
+            @if (Model.SelectedCategoryId.HasValue)
             {
-                <div class="story-card">
-    <h3 class="story-title">@story.Title</h3>
-
-    @if (!story.IsAnonymous)
-    {
-        <span class="story-author">by @story.AuthorName</span>
-    }
-
-    <p class="story-excerpt">@story.Preview</p>
-
-    <div class="story-stats">
-        <span>@story.ViewsCount views</span>
-        <span>@story.LikesCount likes</span>
-    </div>
-
-    <a asp-action="Details"
-       asp-route-id="@story.Id"
-       class="read-story-link">Read Story →</a>
-</div>
-
+                <a asp-action="Index" class="btn btn-outline">Clear</a>
             }
-        </div>
-    }
+        </form>
 
-</div>
+        @if (!Model.Stories.Items.Any())
+        {
+            <div class="empty-state-card">
+                <h2>No stories found</h2>
+                <p>There are no stories matching the selected filter.</p>
+            </div>
+        }
+        else
+        {
+            <div class="category-stories-grid">
+                @foreach (var story in Model.Stories.Items)
+                {
+                    <article class="category-story-card">
+                        <h2 class="category-story-title">@story.Title</h2>
+
+                        <p class="category-story-preview">@story.Preview</p>
+
+                        <div class="category-story-meta">
+                            <span>@(story.IsAnonymous ? "Anonymous" : story.AuthorName)</span>
+                            <span>@story.CreatedOn.ToString("dd MMM yyyy")</span>
+                        </div>
+
+                        <div class="category-story-stats">
+                            <span>👁 @story.ViewsCount</span>
+                            <span>⭐ @story.LikesCount</span>
+                        </div>
+
+                        <a asp-action="Details"
+                               asp-route-id="@story.Id"
+                               class="btn btn-primary category-story-btn">
+                            Read More
+                        </a>
+                    </article>
+                }
+            </div>
+
+            <nav class="pagination-nav" style="margin-top: 2rem;">
+                @if (Model.Stories.Page > 1)
+                {
+                    <a asp-action="Index"
+                           asp-route-page="@(Model.Stories.Page - 1)"
+                           asp-route-categoryId="@Model.SelectedCategoryId"
+                           class="btn btn-outline">
+                        Prev
+                    </a>
+                }
+
+                <span class="pagination-current">
+                    Page @Model.Stories.Page of @Model.Stories.TotalPages
+                </span>
+
+                @if (Model.Stories.Page < Model.Stories.TotalPages)
+                {
+                    <a asp-action="Index"
+                           asp-route-page="@(Model.Stories.Page + 1)"
+                           asp-route-categoryId="@Model.SelectedCategoryId"
+                           class="btn btn-outline">
+                        Next
+                    </a>
+                }
+            </nav>
+        }
+    </section>
+</section>

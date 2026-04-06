@@ -1,0 +1,35 @@
+﻿.form-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding: 10px 40px 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #3a3a3a;
+    background-color: #1e1e1e;
+    color: #fff;
+    font-size: 0.9rem;
+    cursor: pointer;
+    position: relative;
+}
+
+.form-select {
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%23aaa' stroke-width='2'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 12px;
+}
+
+.form-select:hover {
+    border-color: #555;
+}
+
+.form-select:focus {
+    outline: none;
+    border-color: #2d7ef7;
+    box-shadow: 0 0 0 2px rgba(45, 126, 247, 0.2);
+}
+
+.form-select option {
+    background: #1e1e1e;
+    color: #fff;
+}
