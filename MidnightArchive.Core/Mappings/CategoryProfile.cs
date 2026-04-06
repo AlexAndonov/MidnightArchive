@@ -13,8 +13,7 @@ namespace MidnightArchive.Core.Mappings
 		{
 			CreateMap<Category, CategoryDto>();
 			CreateMap<Category, CategoryEditDto>();
-			CreateMap<Category, CategoryDetailDto>();
 			CreateMap<Category, CategoryListDto>();
 		}
 	}
-}
+} 
