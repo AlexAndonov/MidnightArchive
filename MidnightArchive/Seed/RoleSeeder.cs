@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using MidnightArchive.Infra.Data.Models;
-using System.Runtime.InteropServices;
 
 namespace MidnightArchive.Seed
 {
@@ -15,27 +14,43 @@ namespace MidnightArchive.Seed
 			string adminEmail = "admin@midnight.com";
 			string adminPassword = "Admin123!";
 
+			string userEmail = "user@midnight.com";
+			string userPassword = "User123!";
+
 			if (!await roleManager.RoleExistsAsync(adminRole))
 			{
 				await roleManager.CreateAsync(new IdentityRole(adminRole));
 			}
 
-			var user = await userManager.FindByEmailAsync(adminEmail);
+			var admin = await userManager.FindByEmailAsync(adminEmail);
 
-			if (user == null)
+			if (admin == null)
 			{
-				user = new ApplicationUser
+				admin = new ApplicationUser
 				{
 					UserName = adminEmail,
 					Email = adminEmail
 				};
 
-				await userManager.CreateAsync(user, adminPassword);
+				await userManager.CreateAsync(admin, adminPassword);
 			}
 
-			if (!await userManager.IsInRoleAsync(user, adminRole))
+			if (!await userManager.IsInRoleAsync(admin, adminRole))
 			{
-				await userManager.AddToRoleAsync(user, adminRole);
+				await userManager.AddToRoleAsync(admin, adminRole);
+			}
+
+			var user = await userManager.FindByEmailAsync(userEmail);
+
+			if (user == null)
+			{
+				user = new ApplicationUser
+				{
+					UserName = userEmail,
+					Email = userEmail
+				};
+
+				await userManager.CreateAsync(user, userPassword);
 			}
 		}
 	}
