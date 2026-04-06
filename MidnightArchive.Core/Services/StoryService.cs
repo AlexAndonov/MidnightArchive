@@ -3,6 +3,7 @@ using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using MidnightArchive.Core.Constants;
 using MidnightArchive.Core.Contracts;
+using MidnightArchive.Core.DTOs.Common;
 using MidnightArchive.Core.DTOs.StoryDTOs;
 using MidnightArchive.Data;
 using MidnightArchive.Infra.Data.Enums;
@@ -296,6 +297,51 @@ namespace MidnightArchive.Core.Services
 			await context.SaveChangesAsync();
 
 			return StoryOperationResult.Success;
+		}
+
+		public async Task<PagedResult<StorySummaryDto>> GetAllPagedAsync(int page, int pageSize, int? categoryId)
+		{
+			if (page < 1) page = 1;
+			if (pageSize < 1) pageSize = 10;
+
+			var query = context.Stories
+				.Where(s => !s.IsDeleted)
+				.AsQueryable();
+
+			if (categoryId.HasValue)
+			{
+				query = query.Where(s => s.CategoryId == categoryId.Value);
+			}
+
+			int totalCount = await query.CountAsync();
+
+			var stories = await query
+				.OrderByDescending(s => s.CreatedOn)
+				.Select(s => new StorySummaryDto
+				{
+					Id = s.Id,
+					Title = s.Title,
+					Preview = s.Content.Length > 100
+						? s.Content.Substring(0, 100) + "..."
+						: s.Content,
+					CreatedOn = s.CreatedOn,
+					AuthorName = s.IsAnonymous ? "Anonymous" : s.Author.UserName,
+					ViewsCount = s.ViewsCount,
+					LikesCount = s.LikesCount,
+					IsAnonymous = s.IsAnonymous
+				})
+				.Skip((page - 1) * pageSize)
+				.Take(pageSize)
+				.AsNoTracking()
+				.ToListAsync();
+
+			return new PagedResult<StorySummaryDto>
+			{
+				Items = stories,
+				TotalCount = totalCount,
+				Page = page,
+				PageSize = pageSize
+			};
 		}
 	}
 }

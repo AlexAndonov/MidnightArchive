@@ -1,4 +1,5 @@
-﻿using MidnightArchive.Core.DTOs.StoryDTOs;
+﻿using MidnightArchive.Core.DTOs.Common;
+using MidnightArchive.Core.DTOs.StoryDTOs;
 using MidnightArchive.Infra.Data.Enums;
 using System.Xml;
 
@@ -20,5 +21,6 @@ namespace MidnightArchive.Core.Contracts
 		Task<StoryOperationResult> LikeAsync(Guid storyId, string userId);
 		Task<StoryOperationResult> UnlikeAsync(Guid storyId, string userId);
 		Task<bool> HasUserLikedAsync(Guid storyId, string userId);
+		Task<PagedResult<StorySummaryDto>> GetAllPagedAsync(int page, int pageSize, int? categoryId);
 	}
 }
