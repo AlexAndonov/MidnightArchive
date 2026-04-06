@@ -30,29 +30,35 @@ namespace MidnightArchive
 				await RoleSeeder.SeedAsync(services);
 			}
 
-			if (app.Environment.IsDevelopment())
+			app.UseHttpsRedirection();
+			app.UseStaticFiles();
+
+			if (!app.Environment.IsDevelopment())
 			{
-				app.UseMigrationsEndPoint();
+				app.UseExceptionHandler("/Error/500");
+				app.UseStatusCodePagesWithReExecute("/Error", "?statusCode={0}");
+				app.UseHsts();
 			}
 			else
 			{
-				app.UseExceptionHandler("/Home/Error");
-				app.UseHsts();
+				app.UseDeveloperExceptionPage();
+				app.UseStatusCodePagesWithReExecute("/Error", "?statusCode={0}");
 			}
 
-			app.UseHttpsRedirection();
 			app.UseRouting();
 
 			app.UseAuthentication();
 			app.UseAuthorization();
 
-			app.MapStaticAssets();
+			app.MapControllerRoute(
+				name: "areas",
+				pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
 			app.MapControllerRoute(
 				name: "default",
-				pattern: "{controller=Home}/{action=Index}/{id?}")
-				.WithStaticAssets();
-			app.MapRazorPages()
-			   .WithStaticAssets();
+				pattern: "{controller=Home}/{action=Index}/{id?}");
+
+			app.MapRazorPages();
 
 			app.Run();
 		}
