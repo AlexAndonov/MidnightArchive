@@ -33,3 +33,17 @@
     background: #1e1e1e;
     color: #fff;
 }
+
+.story-search-input {
+    padding: 0.7rem 0.9rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-elevated);
+    color: var(--text-primary);
+    min-width: 240px;
+}
+
+.story-search-input:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+}

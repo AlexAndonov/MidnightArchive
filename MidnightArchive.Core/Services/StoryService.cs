@@ -299,7 +299,7 @@ namespace MidnightArchive.Core.Services
 			return StoryOperationResult.Success;
 		}
 
-		public async Task<PagedResult<StorySummaryDto>> GetAllPagedAsync(int page, int pageSize, int? categoryId)
+		public async Task<PagedResult<StorySummaryDto>> GetAllPagedAsync(int page, int pageSize, int? categoryId, string? searchTerm)
 		{
 			if (page < 1) page = 1;
 			if (pageSize < 1) pageSize = 10;
@@ -311,6 +311,13 @@ namespace MidnightArchive.Core.Services
 			if (categoryId.HasValue)
 			{
 				query = query.Where(s => s.CategoryId == categoryId.Value);
+			}
+
+			if (!string.IsNullOrWhiteSpace(searchTerm))
+			{
+				query = query.Where(s =>
+					s.Title.Contains(searchTerm) ||
+					s.Content.Contains(searchTerm));
 			}
 
 			int totalCount = await query.CountAsync();

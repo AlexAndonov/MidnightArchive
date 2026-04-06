@@ -21,6 +21,6 @@ namespace MidnightArchive.Core.Contracts
 		Task<StoryOperationResult> LikeAsync(Guid storyId, string userId);
 		Task<StoryOperationResult> UnlikeAsync(Guid storyId, string userId);
 		Task<bool> HasUserLikedAsync(Guid storyId, string userId);
-		Task<PagedResult<StorySummaryDto>> GetAllPagedAsync(int page, int pageSize, int? categoryId);
+		Task<PagedResult<StorySummaryDto>> GetAllPagedAsync(int page, int pageSize, int? categoryId, string? searchTerm);
 	}
 }

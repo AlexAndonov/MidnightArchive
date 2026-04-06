@@ -16,7 +16,13 @@
 
     <section class="category-stories-section">
 
-        <form method="get" asp-action="Index" class="category-action-buttons" style="margin-bottom: 2rem;">
+        <form method="get" asp-action="Index" class="category-action-buttons" style="margin-bottom: 2rem; flex-wrap: wrap;">
+            <input type="text"
+                   name="searchTerm"
+                   value="@Model.SearchTerm"
+                   placeholder="Search stories..."
+                   class="story-search-input" />
+
             <select name="categoryId" class="form-select" style="max-width: 260px;">
                 <option value="">All Categories</option>
                 @foreach (var category in Model.Categories)
@@ -32,9 +38,9 @@
                 }
             </select>
 
-            <button type="submit" class="btn btn-primary">Filter</button>
+            <button type="submit" class="btn btn-primary">Apply</button>
 
-            @if (Model.SelectedCategoryId.HasValue)
+            @if (Model.SelectedCategoryId.HasValue || !string.IsNullOrWhiteSpace(Model.SearchTerm))
             {
                 <a asp-action="Index" class="btn btn-outline">Clear</a>
             }
@@ -82,6 +88,7 @@
                     <a asp-action="Index"
                            asp-route-page="@(Model.Stories.Page - 1)"
                            asp-route-categoryId="@Model.SelectedCategoryId"
+                           asp-route-searchTerm="@Model.SearchTerm"
                            class="btn btn-outline">
                         Prev
                     </a>
@@ -96,6 +103,7 @@
                     <a asp-action="Index"
                            asp-route-page="@(Model.Stories.Page + 1)"
                            asp-route-categoryId="@Model.SelectedCategoryId"
+                           asp-route-searchTerm="@Model.SearchTerm"
                            class="btn btn-outline">
                         Next
                     </a>

@@ -22,7 +22,7 @@ namespace MidnightArchive.Controllers
 
 		[HttpGet]
 		[AllowAnonymous]
-		public async Task<IActionResult> Index(int? categoryId, int page = 1)
+		public async Task<IActionResult> Index(int? categoryId, int page = 1, string? searchTerm = null)
 		{
 			if (categoryId.HasValue && categoryId.Value <= 0)
 			{
@@ -31,14 +31,15 @@ namespace MidnightArchive.Controllers
 
 			const int pageSize = 9;
 
-			var stories = await service.GetAllPagedAsync(page, pageSize, categoryId);
+			var stories = await service.GetAllPagedAsync(page, pageSize, categoryId, searchTerm);
 			var categories = await categoryService.GetAllAsync();
 
 			var model = new StoryIndexViewModel
 			{
 				Stories = stories,
 				Categories = categories,
-				SelectedCategoryId = categoryId
+				SelectedCategoryId = categoryId,
+				SearchTerm = searchTerm
 			};
 
 			return View(model);

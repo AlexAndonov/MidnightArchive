@@ -10,5 +10,7 @@ namespace MidnightArchive.Core.DTOs.StoryDTOs
 		public IEnumerable<CategoryListDto> Categories { get; set; } = new List<CategoryListDto>();
 
 		public int? SelectedCategoryId { get; set; }
+
+		public string? SearchTerm { get; set; }
 	}
 }
