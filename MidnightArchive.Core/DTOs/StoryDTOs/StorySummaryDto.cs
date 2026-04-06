@@ -13,7 +13,7 @@ namespace MidnightArchive.Core.DTOs.StoryDTOs
 
 		public DateTime CreatedOn { get; set; }
 
-		public string AuthorName { get; set; } = null!;
+		public string? AuthorName { get; set; }
 
 		public int ViewsCount { get; set; }
 
