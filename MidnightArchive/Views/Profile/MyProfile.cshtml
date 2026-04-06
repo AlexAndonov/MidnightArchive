@@ -1,0 +1,61 @@
+﻿@using MidnightArchive.Core.DTOs.HomeDTOs
+@model UserProfileDto
+
+@{
+    ViewData["Title"] = "My Profile";
+}
+
+<section class="profile-page">
+    <div class="container">
+        <div class="profile-header">
+            <h1>@Model.UserName</h1>
+        </div>
+
+        <div class="profile-section">
+            <h2>My Stories</h2>
+
+            @if (!Model.Stories.Any())
+            {
+                <p>You have not written any stories yet.</p>
+            }
+            else
+            {
+                <div class="profile-grid">
+                    @foreach (var story in Model.Stories)
+                    {
+                        <a asp-controller="Story" asp-action="Details" asp-route-id="@story.Id" class="profile-card-link">
+                            <article class="profile-card">
+                                <h3>@story.Title</h3>
+                                <p>Created on: @story.CreatedOn.ToString("dd MMM yyyy")</p>
+                            </article>
+                        </a>
+                    }
+                </div>
+            }
+        </div>
+
+        <div class="profile-section">
+            <h2>Joined Events</h2>
+
+            @if (!Model.JoinedEvents.Any())
+            {
+                <p>You have not joined any events yet.</p>
+            }
+            else
+            {
+                <div class="profile-grid">
+                    @foreach (var ev in Model.JoinedEvents)
+                    {
+                        <a asp-controller="Event" asp-action="Details" asp-route-id="@ev.Id" class="profile-card-link">
+                            <article class="profile-card">
+                                <h3>@ev.Title</h3>
+                                <p>@ev.StartDate.ToString("dd MMM yyyy")</p>
+                                <p>@(string.IsNullOrWhiteSpace(ev.Location) ? "Online" : ev.Location)</p>
+                            </article>
+                        </a>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</section>
