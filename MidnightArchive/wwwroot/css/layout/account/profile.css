@@ -31,13 +31,12 @@
 
 .profile-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
     gap: 1.5rem;
-    align-items: stretch;
 }
 
 .profile-card-link {
-    display: flex;
+    display: block;
     height: 100%;
     text-decoration: none;
     color: inherit;
@@ -49,16 +48,17 @@
 }
 
 .profile-card {
-    display: flex;
-    flex-direction: column;
-    gap: 0.45rem;
-    height: 100%;
-    padding: 1.2rem;
+    height: 180px;
+    padding: 1.3rem;
     border-radius: 12px;
     background: #1e1e1e;
     border: 1px solid #2e2e2e;
     transition: all 0.2s ease;
     box-sizing: border-box;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .profile-card:hover,
@@ -69,10 +69,14 @@
 }
 
 .profile-card h3 {
-    margin: 0 0 0.5rem;
-    font-size: 1.2rem;
+    margin: 0;
+    font-size: 1.1rem;
     color: #fff;
     line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 .profile-card p {
