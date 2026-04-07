@@ -38,15 +38,15 @@
     backdrop-filter: none;
 }
 
-    .hero-text h1 {
-        font-size: clamp(2.2rem, 4.8vw, 4rem);
-        line-height: 1.08;
-        margin-bottom: 1.25rem;
-        color: var(--text-primary);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        text-wrap: balance;
-    }
+.hero-text h1 {
+    font-size: clamp(2.2rem, 4.8vw, 4rem);
+    line-height: 1.08;
+    margin-bottom: 1.25rem;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-wrap: balance;
+}
 
 .hero-subtitle {
     font-size: 1.08rem;
@@ -64,10 +64,10 @@
     gap: 1rem;
 }
 
-    .hero-actions .btn {
-        min-width: 220px;
-        text-align: center;
-    }
+.hero-actions .btn {
+    min-width: 220px;
+    text-align: center;
+}
 
 .top-stories,
 .latest-stories,
@@ -93,18 +93,18 @@
     background: linear-gradient(180deg, #131821 0%, #0d1016 100%);
 }
 
-    .top-stories::after,
-    .latest-stories::after,
-    .featured-categories::after,
-    .featured-events::after {
-        content: "";
-        position: absolute;
-        left: 2rem;
-        right: 2rem;
-        bottom: 0;
-        height: 1px;
-        background: rgba(255, 255, 255, 0.06);
-    }
+.top-stories::after,
+.latest-stories::after,
+.featured-categories::after,
+.featured-events::after {
+    content: "";
+    position: absolute;
+    left: 2rem;
+    right: 2rem;
+    bottom: 0;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.06);
+}
 
 .section-title {
     text-transform: uppercase;
@@ -134,13 +134,13 @@
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
 }
 
-    .story-card h3 {
-        color: var(--text-primary);
-        margin-bottom: 0.75rem;
-        padding-bottom: 0.55rem;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-        line-height: 1.4;
-    }
+.story-card h3 {
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.55rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    line-height: 1.4;
+}
 
 .story-excerpt {
     margin: 0.5rem 0 1rem;
@@ -190,29 +190,29 @@
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
 }
 
-    .category-card h3 {
-        color: var(--text-primary);
-        text-align: center;
-        text-transform: uppercase;
-        line-height: 1.4;
-    }
+.category-card h3 {
+    color: var(--text-primary);
+    text-align: center;
+    text-transform: uppercase;
+    line-height: 1.4;
+}
 
-    .category-card p {
-        color: var(--text-secondary);
-        line-height: 1.75;
-        flex-grow: 1;
-    }
+.category-card p {
+    color: var(--text-secondary);
+    line-height: 1.75;
+    flex-grow: 1;
+}
 
-    .category-card span {
-        color: var(--text-secondary);
-        font-size: 0.95rem;
-    }
+.category-card span {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
 
-    .category-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 0 15px rgba(139, 30, 45, 0.2);
-        border-color: rgba(139, 30, 45, 0.28);
-    }
+.category-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0 15px rgba(139, 30, 45, 0.2);
+    border-color: rgba(139, 30, 45, 0.28);
+}
 
 .random-story-section,
 .write-story-section {
@@ -230,16 +230,16 @@
     background: linear-gradient(180deg, rgba(24, 18, 22, 0.96) 0%, rgba(10, 10, 14, 1) 100%), radial-gradient(circle at center, rgba(139, 30, 45, 0.12), transparent 50%);
 }
 
-    .random-story-section::after,
-    .write-story-section::after {
-        content: "";
-        position: absolute;
-        left: 2rem;
-        right: 2rem;
-        bottom: 0;
-        height: 1px;
-        background: rgba(255, 255, 255, 0.06);
-    }
+.random-story-section::after,
+.write-story-section::after {
+    content: "";
+    position: absolute;
+    left: 2rem;
+    right: 2rem;
+    bottom: 0;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.06);
+}
 
 .random-story-content,
 .write-story-content {
@@ -326,10 +326,10 @@
     text-align: center;
 }
 
-    .footer-bottom p {
-        color: var(--text-secondary);
-        margin: 0;
-    }
+.footer-bottom p {
+    color: var(--text-secondary);
+    margin: 0;
+}
 
 @media (max-width: 992px) {
     .footer-grid {
