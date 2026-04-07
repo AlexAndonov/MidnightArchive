@@ -1,155 +1,175 @@
-# MidnightArchive
+# MidnightArchive 👻
 
-MidnightArchive is a web application for sharing and exploring user-generated stories.  
-The platform allows users to create, read, and interact with stories organized by categories.
+> ASP.NET Core MVC web platform for sharing and exploring horror stories with moderation and event system.
 
-The goal of the project is to simulate a real-world content platform while practicing clean architecture, ASP.NET Core development, and modern web development patterns.
-
----
-
-## Project Purpose
-
-This project was built as a learning project to practice building a full ASP.NET Core MVC application from scratch.  
-It focuses on implementing common real-world patterns such as:
-
-- Layered architecture
-- DTO-based service layer
-- Entity Framework Core data access
-- Clean separation of concerns
-- CRUD operations
-- User-generated content management
+MidnightArchive is an ASP.NET Core MVC web platform where users can share scary stories, explore stories by category, interact through comments and likes, and participate in community events.
+The platform also includes an admin moderation area for managing categories and resolving reported stories.
 
 ---
 
-## Main Features
+## 🚀 Features
 
-### Story Management
+### 👤 Public/User Features
 
-Users can create and manage stories in the system.
+* Browse stories by category
+* Search stories
+* Pagination for story listings
+* Create, edit, and delete stories
+* View count system 👁️
+* Like system ❤️
+* Comment on stories 💬
+* Edit and delete own comments
+* Browse and join events 📅
+* Leave joined events
+* Create, edit, and delete own events
+* Random story feature 🎲
 
-Features include:
+### 🛠️ Admin Features
 
-- Create stories
-- Edit stories
-- Delete stories (soft delete / hard delete)
-- View story details
-- Browse all stories
-- Filter stories by category
+* Manage categories
+* Access admin area
+* Review reported stories 🚨
+* Resolve reports
+* Delete inappropriate stories through moderation flow
 
-Each story contains:
+### ⚖️ Moderation / Reporting
 
-- Title
-- Content
-- Author
-- Category
-- Created / Modified date
-- Views count
-- Likes count
-- Anonymous posting option
+* Users can report stories
+* Each report includes:
 
----
-
-### Categories
-
-Stories are organized into categories which help structure the content.
-
-Features include:
-
-- Create categories
-- Edit categories
-- Delete categories
-- Browse categories
-- View stories inside a category
+  * reason
+  * optional description
+* Admin can review reported stories and take action
 
 ---
 
-### Comments
+## 🧰 Tech Stack
 
-Users can leave comments under stories.
-
-Each comment includes:
-
-- Author
-- Content
-- Created date
-
----
-
-## Technologies Used
-
-### Backend
-
-- ASP.NET Core MVC
-- Entity Framework Core
-- ASP.NET Core Identity
-- AutoMapper
-- LINQ
-- Dependency Injection
-
-### Frontend
-
-- Razor Views
-- HTML
-- CSS
-- JavaScript
-
-### Database
-
-- SQL Server
-- Code-First approach with Entity Framework Core
-
----
-### Layers
-
-**Web Layer**
-
-Handles HTTP requests and responses through MVC controllers and Razor views.
-
-**Core Layer**
-
-Contains business logic, DTOs, and service interfaces.
-
-**Infrastructure Layer**
-
-Defines the database models and entity configuration.
-
-**Data Layer**
-
-Contains the database context used by Entity Framework Core.
+* ASP.NET Core MVC
+* Entity Framework Core (Code First)
+* SQL Server
+* ASP.NET Core Identity
+* AutoMapper
+* In-memory caching
+* xUnit for unit testing
 
 ---
 
-## Key Concepts Practiced
+## 🏗️ Architecture
 
-This project focuses on practicing important backend concepts:
+The project follows a layered architecture:
 
-- Dependency Injection
-- Separation of concerns
-- Service layer architecture
-- DTO mapping with AutoMapper
-- Entity Framework Core queries
-- Soft delete pattern
-- Razor view development
-- Clean controller logic
+* **MidnightArchive** – MVC web application
+* **MidnightArchive.Core** – business logic, services, DTOs, contracts
+* **MidnightArchive.Infra** – data access, EF Core, entity models, migrations
+* **MidnightArchive.Tests** – unit tests
 
----
+### 🔍 Architectural Notes
 
-## Future Improvements
-
-Possible future improvements include:
-
-- Full authentication and authorization features
-- Like system for stories
-- Story search functionality
-- Pagination
-- Improved UI/UX
-- Caching for read-heavy queries
-- SEO-friendly URLs
-- Advanced filtering
-- Deployment
+* Controllers are thin
+* Business logic is handled in services
+* DTO + Service pattern is used
+* Entity Framework Core is used with Code First approach
+* ASP.NET Core Identity is configured with a custom `ApplicationUser`
+* Role-based authorization is implemented
+* Soft delete is used in selected parts of the system
 
 ---
 
-## Author
+## 🔑 Demo Accounts
 
-This project was created as part of a learning journey focused on mastering ASP.NET Core and backend development.
+### 👑 Admin
+
+* Email: `admin@midnight.com`
+* Password: `Admin123!`
+
+### 👤 User
+
+* Email: `user@midnight.com`
+* Password: `User123!`
+
+### ✍️ Writer
+
+* Email: `writer@midnight.com`
+* Password: `Writer123!`
+
+> The admin account is used for moderation and category management.
+> Demo content such as stories, events, and comments is created by the seeded user accounts.
+
+---
+
+## 🗄️ Database Setup
+
+The project is configured by default to use SQL Server LocalDB:
+
+```json
+"DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=MidnightArchiveDb;Trusted_Connection=True;MultipleActiveResultSets=true"
+```
+
+### ⚠️ Important
+
+If you are using a different SQL Server instance, update the connection string in `appsettings.json`.
+
+---
+
+## ▶️ How to Run
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/AlexAndonov/MidnightArchive
+```
+
+---
+
+### 🧪 Run using Package Manager Console (Visual Studio)
+
+1. Set **Startup Project** → `MidnightArchive`
+
+2. Open **Package Manager Console**
+
+3. Set:
+
+   * Default Project → `MidnightArchive.Infra`
+
+4. Run:
+
+```powershell
+Update-Database
+```
+
+5. Start the project ▶️
+
+---
+
+### 💻 Run using CLI
+
+```bash
+dotnet ef database update --project .\MidnightArchive.Infra\MidnightArchive.Infra.csproj --startup-project .\MidnightArchive\MidnightArchive.csproj
+dotnet run --project .\MidnightArchive\MidnightArchive.csproj
+```
+
+---
+
+## 📝 Notes
+
+* The database is automatically seeded on first run
+* Categories, stories, events, and comments are preloaded
+* One category contains multiple stories to demonstrate pagination 📄
+* Admin account does not create content (used only for moderation)
+* Two user accounts are used for realistic demo interactions
+
+---
+
+## 🎯 Project Purpose
+
+This project demonstrates:
+
+* Clean layered architecture
+* Separation of concerns
+* Real-world ASP.NET Core MVC patterns
+* Entity Framework Core usage with Code First
+* Identity integration and role-based authorization
+* Feature implementation end-to-end (CRUD, filtering, pagination, moderation)
+
+---
