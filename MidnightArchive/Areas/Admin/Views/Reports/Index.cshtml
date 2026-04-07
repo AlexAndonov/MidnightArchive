@@ -5,52 +5,82 @@
     ViewData["Title"] = "Reported Stories";
 }
 
-<section class="profile-page">
-    <div class="container">
-        <div class="profile-header">
+<section class="reports-page">
+    <div class="container reports-page-shell">
+        <div class="reports-page-header">
             <h1>Reported Stories</h1>
+            <p>Review reported stories and resolve moderation cases.</p>
         </div>
 
-        <div class="profile-section">
-            @if (!Model.Any())
-            {
+        @if (!Model.Any())
+        {
+            <div class="reports-empty-state">
+                <h3>No reported stories</h3>
                 <p>There are no reported stories at the moment.</p>
-            }
-            else
-            {
-                <div class="profile-grid">
-                    @foreach (var report in Model)
-                    {
-                        <article class="profile-card">
-                            <h3>@report.StoryTitle</h3>
-                            <p><strong>Author:</strong> @report.AuthorName</p>
-                            <p><strong>Reports:</strong> @report.ReportsCount</p>
-                            <p><strong>Latest report:</strong> @report.LatestReportDate.ToString("dd MMM yyyy")</p>
-                            <p><strong>Reason:</strong> @report.LatestReason</p>
+            </div>
+        }
+        else
+        {
+            <div class="reports-table-wrapper">
+                <table class="reports-table">
+                    <thead>
+                        <tr>
+                            <th>Story</th>
+                            <th>Author</th>
+                            <th>Reports</th>
+                            <th>Latest Report</th>
+                            <th>Reason</th>
+                            <th>Description</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var report in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <a class="report-story-link"
+                                           href="@Url.Action("Details", "Story", new { area = "", id = report.StoryId })">
+                                        @report.StoryTitle
+                                    </a>
+                                </td>
+                                <td>@report.AuthorName</td>
+                                <td>@report.ReportsCount</td>
+                                <td>@report.LatestReportDate.ToString("dd MMM yyyy")</td>
+                                <td>@report.LatestReason</td>
+                                <td>
+                                    @if (!string.IsNullOrWhiteSpace(report.LatestDescription))
+                                    {
+                                        @report.LatestDescription
+                                    }
+                                    else
+                                    {
+                                        <span class="report-empty-text">No description provided</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="report-actions">
+                                        <a class="btn btn-outline"
+                                               href="@Url.Action("Details", "Story", new { area = "", id = report.StoryId })">
+                                            View Story
+                                        </a>
 
-                            @if (!string.IsNullOrWhiteSpace(report.LatestDescription))
-                            {
-                                <p><strong>Description:</strong> @report.LatestDescription</p>
-                            }
+                                        <form action="@Url.Action("Resolve", "Reports", new { area = "Admin" })"
+                                              method="post">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="storyId" value="@report.StoryId" />
 
-                            <div>
-                                <a href="@Url.Action("Details", "Story", new { area = "", id = report.StoryId })">
-                                    View Story
-                                </a>
-                            </div>
-                            <form action="@Url.Action("Resolve", "Reports", new { area = "Admin" })"
-                                  method="post">
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="storyId" value="@report.StoryId" />
-
-                                <button type="submit" class="btn btn-primary">
-                                    Resolve
-                                </button>
-                            </form>
-                        </article>
-                    }
-                </div>
-            }
-        </div>
+                                            <button type="submit" class="btn btn-primary">
+                                                Resolve
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
     </div>
 </section>
