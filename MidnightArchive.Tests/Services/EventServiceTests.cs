@@ -799,5 +799,180 @@ namespace MidnightArchive.Tests.Services
 			result.Should().Be(EventLeaveResult.Success);
 			participantInDb.Should().BeNull();
 		}
-	}
+
+        [Fact]
+        public async Task GetAllAsync_ShouldReturnOnlyNonDeletedEvents()
+        {
+            using ApplicationDbContext context = TestDbContextFactory.Create();
+            EventService service = CreateService(context);
+
+            var creator = new ApplicationUser
+            {
+                Id = "creator-1",
+                UserName = "creator",
+                Email = "creator@test.com"
+            };
+
+            var activeEvent = new Event
+            {
+                Id = Guid.NewGuid(),
+                Title = "Active Event",
+                Description = "Description",
+                Location = "Online",
+                CreatorId = creator.Id,
+                Creator = creator,
+                StartDate = DateTime.UtcNow.AddDays(2),
+                EndDate = DateTime.UtcNow.AddDays(3),
+                IsDeleted = false
+            };
+
+            var deletedEvent = new Event
+            {
+                Id = Guid.NewGuid(),
+                Title = "Deleted Event",
+                Description = "Description",
+                Location = "Online",
+                CreatorId = creator.Id,
+                Creator = creator,
+                StartDate = DateTime.UtcNow.AddDays(4),
+                EndDate = DateTime.UtcNow.AddDays(5),
+                IsDeleted = true
+            };
+
+            await context.Users.AddAsync(creator, TestContext.Current.CancellationToken);
+            await context.Events.AddRangeAsync(activeEvent, deletedEvent);
+            await context.SaveChangesAsync(TestContext.Current.CancellationToken);
+
+            var result = (await service.GetAllAsync()).ToList();
+
+            result.Should().HaveCount(1);
+            result[0].Id.Should().Be(activeEvent.Id);
+            result[0].Title.Should().Be("Active Event");
+        }
+
+        [Fact]
+        public async Task GetByIdAsync_ShouldReturnNull_WhenEventIsDeleted()
+        {
+            using ApplicationDbContext context = TestDbContextFactory.Create();
+            EventService service = CreateService(context);
+
+            var creator = new ApplicationUser
+            {
+                Id = "creator-1",
+                UserName = "creator",
+                Email = "creator@test.com"
+            };
+
+            var deletedEvent = new Event
+            {
+                Id = Guid.NewGuid(),
+                Title = "Deleted Event",
+                Description = "Description",
+                Location = "Online",
+                CreatorId = creator.Id,
+                Creator = creator,
+                StartDate = DateTime.UtcNow.AddDays(2),
+                EndDate = DateTime.UtcNow.AddDays(3),
+                IsDeleted = true
+            };
+
+            await context.Users.AddAsync(creator, TestContext.Current.CancellationToken);
+            await context.Events.AddAsync(deletedEvent, TestContext.Current.CancellationToken);
+            await context.SaveChangesAsync(TestContext.Current.CancellationToken);
+
+            EventDetailsDto? result = await service.GetByIdAsync(deletedEvent.Id, null);
+
+            result.Should().BeNull();
+        }
+
+        [Fact]
+        public async Task EditAsync_ShouldSetLocationToOnline_WhenLocationIsNullOrWhitespace()
+        {
+            using ApplicationDbContext context = TestDbContextFactory.Create();
+            EventService service = CreateService(context);
+
+            var eventEntity = new Event
+            {
+                Id = Guid.NewGuid(),
+                Title = "Old Title",
+                Description = "Old Description",
+                Location = "Old Location",
+                CreatorId = "creator-1",
+                StartDate = DateTime.UtcNow.AddDays(2),
+                EndDate = DateTime.UtcNow.AddDays(3),
+                IsDeleted = false
+            };
+
+            await context.Events.AddAsync(eventEntity, TestContext.Current.CancellationToken);
+            await context.SaveChangesAsync(TestContext.Current.CancellationToken);
+
+            var model = new EventEditDto
+            {
+                Id = eventEntity.Id,
+                Title = "New Title",
+                Description = "New Description",
+                Location = "   ",
+                StartDate = new DateTime(2026, 4, 20),
+                EndDate = new DateTime(2026, 4, 21)
+            };
+
+            EventOperationResult result = await service.EditAsync(model, "creator-1");
+
+            Event? updatedEvent = await context.Events.FirstOrDefaultAsync(e => e.Id == eventEntity.Id, TestContext.Current.CancellationToken);
+
+            result.Should().Be(EventOperationResult.Success);
+            updatedEvent.Should().NotBeNull();
+            updatedEvent!.Location.Should().Be("Online");
+        }
+
+        [Fact]
+        public async Task IsOwnerAsync_ShouldReturnFalse_WhenEventIsDeleted()
+        {
+            using ApplicationDbContext context = TestDbContextFactory.Create();
+            EventService service = CreateService(context);
+
+            var eventEntity = new Event
+            {
+                Id = Guid.NewGuid(),
+                Title = "Deleted Event",
+                Description = "Description",
+                CreatorId = "creator-1",
+                StartDate = DateTime.UtcNow.AddDays(1),
+                EndDate = DateTime.UtcNow.AddDays(2),
+                IsDeleted = true
+            };
+
+            await context.Events.AddAsync(eventEntity, TestContext.Current.CancellationToken);
+            await context.SaveChangesAsync(TestContext.Current.CancellationToken);
+
+            bool result = await service.IsOwnerAsync(eventEntity.Id, "creator-1");
+
+            result.Should().BeFalse();
+        }
+
+        [Fact]
+        public async Task LeaveAsync_ShouldReturnNotFound_WhenEventIsDeleted()
+        {
+            using ApplicationDbContext context = TestDbContextFactory.Create();
+            EventService service = CreateService(context);
+
+            var eventEntity = new Event
+            {
+                Id = Guid.NewGuid(),
+                Title = "Deleted Event",
+                Description = "Description",
+                CreatorId = "creator-1",
+                StartDate = DateTime.UtcNow.AddDays(2),
+                EndDate = DateTime.UtcNow.AddDays(3),
+                IsDeleted = true
+            };
+
+            await context.Events.AddAsync(eventEntity, TestContext.Current.CancellationToken);
+            await context.SaveChangesAsync(TestContext.Current.CancellationToken);
+
+            EventLeaveResult result = await service.LeaveAsync(eventEntity.Id, "user-1");
+
+            result.Should().Be(EventLeaveResult.NotFound);
+        }
+    }
 }
