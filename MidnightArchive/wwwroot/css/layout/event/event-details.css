@@ -105,3 +105,24 @@
     margin-left: auto;
     font-weight: bold;
 }
+
+.alert {
+    padding: 0.9rem 1.1rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    border: 1px solid transparent;
+}
+
+.alert-success {
+    color: #d8f5dd;
+    background: rgba(46, 125, 50, 0.16);
+    border-color: rgba(76, 175, 80, 0.35);
+}
+
+.alert-danger {
+    color: #ffd6d6;
+    background: rgba(198, 40, 40, 0.16);
+    border-color: rgba(244, 67, 54, 0.35);
+}
