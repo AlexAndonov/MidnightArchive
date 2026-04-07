@@ -7,6 +7,7 @@
     string? currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
     bool isAuthenticated = User.Identity?.IsAuthenticated ?? false;
     bool isOwner = isAuthenticated && currentUserId == Model.CreatorId;
+    bool isAdmin = User.IsInRole("Admin");
 }
 
 <section class="event-details-page">
@@ -92,9 +93,8 @@
             <div class="event-details-actions">
                 <a asp-action="Index" class="btn btn-outline">Back to Events</a>
 
-                @if (isOwner)
+                @if (isOwner || isAdmin)
                 {
-                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
                     <a asp-action="SoftDelete" asp-route-id="@Model.Id" class="btn btn-outline">Delete</a>
                 }
                 else if (isAuthenticated)
