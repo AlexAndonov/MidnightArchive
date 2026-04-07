@@ -4,21 +4,21 @@ using MidnightArchive.Core.Mappings;
 
 namespace MidnightArchive.Tests.Helpers
 {
-	public static class MapperFactory
-	{
-		public static IMapper Create()
-		{
-			var config = new MapperConfiguration(cfg =>
-			{
-				cfg.AddProfile<StoryProfile>();
-				cfg.AddProfile<CommentProfile>();
-				cfg.AddProfile<EventProfile>();
-				cfg.AddProfile<CategoryProfile>();
-			}, NullLoggerFactory.Instance);
+    public static class MapperFactory
+    {
+        public static IMapper Create()
+        {
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile<StoryProfile>();
+                cfg.AddProfile<CommentProfile>();
+                cfg.AddProfile<EventProfile>();
+                cfg.AddProfile<CategoryProfile>();
+            }, NullLoggerFactory.Instance);
 
-			config.AssertConfigurationIsValid();
+            config.AssertConfigurationIsValid();
 
-			return config.CreateMapper();
-		}
-	}
+            return config.CreateMapper();
+        }
+    }
 }
